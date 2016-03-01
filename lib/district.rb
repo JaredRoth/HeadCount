@@ -3,14 +3,14 @@ require 'pry'
 
 class District
 
-  attr_accessor :location, :timeframe, :data ,:dataformat
+  attr_accessor :timeframe, :data ,:dataformat, :name, :location
 
   def initialize(args)
     # binding.pry
-    @location = args[:location]
-    @timeframe = args[:timeframe]
-    @data = args[:data]
-    @dataformat = args[:dataformat]
+    @name = @location = args[:name] ||  args[:location]
+    # @timeframe = args[:timeframe]
+    # @data = args[:data]
+    # @dataformat = args[:dataformat]
   end
 
 
