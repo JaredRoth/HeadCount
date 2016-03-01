@@ -1,0 +1,7 @@
+Overall Structure
+
+iterations => 0-4 + 5/6
+
+key concepts
+
+Districts => main source of data. Key of data
