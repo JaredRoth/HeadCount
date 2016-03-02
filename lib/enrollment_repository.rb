@@ -1,9 +1,12 @@
 require 'csv'
 require './lib/enrollment'
+require './lib/module_helper'
 require 'pry'
 
 
 class EnrollmentRepository
+  include Helper
+
 
   attr_reader :enrollments
 
@@ -37,7 +40,8 @@ class EnrollmentRepository
 
     data_by_location.each do |key,value|
       value.each do |line|
-        participation[line[:timeframe]] = line[:data]
+        participation[line[:timeframe]] = sanitize_data(line[:data])
+        #binding.pry if key.downcase == 'academy 20'
       end
 
       enrollments << Enrollment.new({name: key, kindergarten_participation: participation})

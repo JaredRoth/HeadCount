@@ -1,10 +1,12 @@
 require './lib/district_repository'
 class HeadcountAnalyst
 
+  attr_reader :load_data, :dr
 
   def initialize(dr)
     @dr = dr
     @dr.load_data('./data/sample_kindergartners_file.csv')
+
   end
 
 
@@ -30,8 +32,9 @@ class HeadcountAnalyst
 
     state_name = params[:against]
     state_average = calculate_participation_average(state_name)
+    # binding.pry
 
-    district_average / state_average
+    truncate(district_average / state_average)
   end
 
   def truncate(value)
@@ -40,16 +43,19 @@ class HeadcountAnalyst
 
   def kindergarten_participation_rate_variation_trend(district_name, params)
     state_name = params[:against]
-    state = @dr.find_by_name(state_name)
+    district = @dr.find_by_name(district_name)
     district_participation_hash = district.enrollment.kindergarten_participation_by_year
+    compute_state_district_participation_trend(state_name,district_participation_hash)
+  end
 
-    district_participation_hash.each_with_index do |year,value,index|
-      #perform a lookup for year data for state
+  def compute_state_district_participation_trend(state_name,district_participation_hash)
+    state = @dr.find_by_name(state_name)
+    district_participation_hash.map do |year,value|
       state_value = state.enrollment.kindergarten_participation_in_year(year)
       [year,truncate(value/state_value)] unless state_value.nil?
     end.to_h
-
   end
+
 
 end
 
