@@ -41,11 +41,10 @@ class EnrollmentRepositoryTest < Minitest::Test
     end
   end
 
-  # def test_value_for_specific_year_is_correct
-  #   e = @er.enrollments.find { |enroll| enroll.name == "ACADEMY 20"}
-  #
-  #   assert_equal 0.436, e.kindergarten_participation_in_year(2010)
-  # end
+  def test_value_for_specific_year_is_correct
+    enrollment = @er.find_by_name("ACADEMY 20")
+    assert_equal 0.436, enrollment.kindergarten_participation_in_year(2010)
+  end
 
   def test_enrollment_creates_array_of_enrollments
     refute @er.enrollments.nil?
