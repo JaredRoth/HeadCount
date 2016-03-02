@@ -24,7 +24,7 @@ class HeadcountAnalyst
   end
 
 
-  def kindergarten_participation_rate_variation(district_name,params)
+  def kindergarten_participation_rate_variation(district_name, params)
 
     district_average = calculate_participation_average(district_name)
 
@@ -45,7 +45,7 @@ class HeadcountAnalyst
 
     district_participation_hash.each_with_index do |year,value,index|
       #perform a lookup for year data for state
-      state_value = state.enrollment.kindergarten_participation_in_year(year
+      state_value = state.enrollment.kindergarten_participation_in_year(year)
       [year,truncate(value/state_value)] unless state_value.nil?
     end.to_h
 
