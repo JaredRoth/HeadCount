@@ -19,8 +19,7 @@ class HeadcountAnalyst
     #binding.pry
     district = @dr.find_by_name(district_name)
     participation_hash = district.enrollment.kindergarten_participation_by_year
-    #traverse the district participation hash to compute the avg for all years
-    compute_average_from_participation_hash(participation_hash)
+      compute_average_from_participation_hash(participation_hash)
   end
 
   def kindergarten_participation_rate_variation(district_name, params)
