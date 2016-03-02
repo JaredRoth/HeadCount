@@ -13,7 +13,7 @@ class EnrollmentRepository
 
   def load_data(file)
     filename = String === file ? file : file[:enrollment][:kindergarten]
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map (&:to_h)
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
     build_repo(data)
   end
 
