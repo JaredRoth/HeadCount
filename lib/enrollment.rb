@@ -3,15 +3,14 @@ require 'pry'
 
 class Enrollment
 
-  attr_accessor :name, :location, :timeframe,:data, :dataformat, :kindergarten_participation
+  attr_accessor :name, :timeframe,:data, :dataformat, :kindergarten_participation
 
 
   def initialize(args)
-    @name = @location = args[:name] || args[:location]
+    @name = args[:name].upcase #args[:name].upcase
     @kindergarten_participation = truncated_kindergarten_participation(args[:kindergarten_participation])
-    @timeframe = args[:timeframe]
-    @data = args[:data]
-    @dataformat = args[:dataformat]
+    # @timeframe = args[:timeframe]
+    # @data = args[:data]
   end
 
   def truncate(value)
@@ -19,7 +18,6 @@ class Enrollment
   end
 
   def truncated_kindergarten_participation(hash)
-    # binding.pry
     hash.map do |year,value|
         [year, truncate(value.to_f)]
     end.to_h

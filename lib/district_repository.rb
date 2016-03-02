@@ -16,12 +16,9 @@ class DistrictRepository
     data = CSV.open filename, headers: true, header_converters: :symbol
 
     data.each do |row|
-      # binding.pry
-      districts << District.new(location: row[:location],
-       timeframe: row[:timeframe],
-       dataformat: row[:dataformat],
-       data: row[:data])
-
+      if districts.none? {|district| district.name == row[:location].upcase}
+        districts << District.new(location: row[:location])
+      end
     end
   end
 
@@ -34,12 +31,12 @@ class DistrictRepository
   end
 
   def find_by_name(location)
-    districts.find { |district| district.location.upcase == location.upcase }
+    districts.find { |district| district.name == location.upcase }
   end
 
   def find_all_matching(location)
     districts.find_all { |district|
-    district.location.upcase.include?(location.upcase)}
+    district.name.include?(location.upcase)}
   end
 
 end

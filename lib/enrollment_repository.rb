@@ -15,29 +15,31 @@ class EnrollmentRepository
     filename = String === file ? file : file[:enrollment][:kindergarten]
     data = CSV.open filename, headers: true, header_converters: :symbol
 
-    data.each do |row|
-      binding.pry
-      enrollments << Enrollment.new(location: row[:location],
-       timeframe: row[:timeframe],
-       dataformat: row[:dataformat],
-       data: row[:data])
+    data_by_location = data.group_by do |row|
+      row[:location]
     end
-  end
+    create_enrollments(data_by_location)
 
-  def all
-    enrollments
   end
 
   def load_data_info(district_name)
     district_in.each { |district| enrollments << district}
   end
-  
+
   def find_by_name(location)
-    enrollments.find { |enrollment| enrollment.location.upcase == location.upcase}
+    enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
   end
 
-
-
+  def create_enrollments(data_by_location)
+    participation = {}
+    data_by_location.each do |k,v|
+      v.each do |csv|
+        participation[csv[:timeframe]] = csv[:data]
+      end
+      @enrollments << Enrollment.new({name: k, kindergarten_participation: participation})
+      participation.clear
+    end
+  end
 end
 
 # er = EnrollmentRepository.new

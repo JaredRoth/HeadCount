@@ -1,17 +1,14 @@
 require 'csv'
 require 'pry'
+require './lib/enrollment'
 
 class District
 
-  attr_accessor :timeframe, :data ,:dataformat, :name, :location
+  attr_accessor :name
 
   def initialize(args)
-    # binding.pry
-    @name = @location = args[:name] ||  args[:location]
-    # @timeframe = args[:timeframe]
-    # @data = args[:data]
-    # @dataformat = args[:dataformat]
+    @name = args[:location].upcase
   end
 
-
+  
 end
