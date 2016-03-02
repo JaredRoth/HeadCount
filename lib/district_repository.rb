@@ -25,10 +25,6 @@ class DistrictRepository
     insert_enrollment_info_into_districts
   end
 
-  def all
-    @districts
-  end
-
   def insert_enrollment_info_into_districts
     districts.each do |district|
       district.enrollment = @enrollment_repo.find_by_name(district.name)
