@@ -14,7 +14,7 @@ class DistrictRepository
 
   def load_data(file)
     filename = String === file ? file : file[:enrollment][:kindergarten]
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map { |row| row.to_h }
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
     build_all_repos(data)
   end
 
