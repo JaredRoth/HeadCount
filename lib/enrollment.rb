@@ -16,7 +16,7 @@ class Enrollment
 
   def truncated_kindergarten_participation(hash)
     hash.map do |year,value|
-        [year, truncate(value.to_f)]
+        [year.to_i, truncate(value.to_f)]
     end.to_h
   end
 
@@ -25,7 +25,7 @@ class Enrollment
 
   end
 
-  def kindergarten_participation_in_year(year) 
-    @kindergarten_participation.fetch(year.to_s, nil)
+  def kindergarten_participation_in_year(year)
+    @kindergarten_participation.fetch(year, nil)
   end
 end

@@ -13,6 +13,12 @@ class EnrollmentRepository
     @enrollments = []
   end
 
+  def load_data(file)
+    filename = String === file ? file : file[:enrollment][:kindergarten]
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
+    build_repo(data)
+  end
+
   def build_repo(data)
     data_grouped_by_location = data.group_by do |row|
       row[:location]
