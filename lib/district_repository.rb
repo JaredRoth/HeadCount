@@ -11,16 +11,14 @@ class DistrictRepository
     @districts = []
   end
 
-  def load_data(filename)
+  def load_data(file)
+    filename = String === file ? file : file[:enrollment][:kindergarten]
     data = CSV.open filename, headers: true, header_converters: :symbol
 
     data.each do |row|
-      #  binding.pry
-      districts << District.new(location: row[:location],
-       timeframe: row[:timeframe],
-       dataformat: row[:dataformat],
-       data: row[:data])
-
+      if districts.none? {|district| district.name == row[:location].upcase}
+        districts << District.new(location: row[:location])
+      end
     end
   end
 
@@ -28,19 +26,17 @@ class DistrictRepository
     districts
   end
 
-
   def load_data_info(district_in)
     district_in.each { |district| districts << district}
   end
 
   def find_by_name(location)
-    districts.find { |district| district.location.downcase == location.downcase }
+    districts.find { |district| district.name == location.upcase }
   end
 
   def find_all_matching(location)
     districts.find_all { |district|
-    district.location.downcase.include?(location.downcase)}
-    
+    district.name.include?(location.upcase)}
   end
 
 end
