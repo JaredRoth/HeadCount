@@ -1,29 +1,40 @@
 require './lib/district'
+require './lib/enrollment_repository'
 require 'pry'
 require 'csv'
 
-
 class DistrictRepository
 
-  attr_reader :districts
+  attr_reader :districts, :enrollment_repo
 
   def initialize
     @districts = []
+    @enrollment_repo = EnrollmentRepository.new
   end
 
   def load_data(file)
     filename = String === file ? file : file[:enrollment][:kindergarten]
-    data = CSV.open filename, headers: true, header_converters: :symbol
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
+    build_all_repos(data)
+  end
 
-    data.each do |row|
-      if districts.none? {|district| district.name == row[:location].upcase}
-        districts << District.new(location: row[:location])
-      end
+  def build_all_repos(data)
+    create_district_repo(data)
+    @enrollment_repo.build_repo(data)
+    insert_enrollment_info_into_districts
+  end
+
+  def insert_enrollment_info_into_districts
+    districts.each do |district|
+      district.enrollment = @enrollment_repo.find_by_name(district.name)
     end
   end
 
-  def all
-    districts
+  def create_district_repo(data)
+    data.each do |row|
+      next if find_by_name(row[:location].upcase)
+      districts << District.new(name: row[:location])
+    end
   end
 
   def load_data_info(district_in)
@@ -40,7 +51,3 @@ class DistrictRepository
   end
 
 end
-
-# ds = DistrictRepository.new
-# ds.load_data('./data/Kindergartners in full-day program.csv')
-# ds.find_all_matching("AG")
