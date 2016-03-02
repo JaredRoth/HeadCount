@@ -4,8 +4,9 @@ require './test/test_helper'
 class EnrollmentRepositoryTest < Minitest::Test
 
   def setup
-    @er = EnrollmentRepository.new
-    @er.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
+    dr = DistrictRepository.new
+    dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
+    @er = dr.enrollment_repo
   end
 
   def test_can_load_all_data
@@ -32,7 +33,7 @@ class EnrollmentRepositoryTest < Minitest::Test
       "2013"=>0.976,
       "2014"=>0.971}
 
-    assert_equal e, result.kindergarten_participation
+    assert_equal e, result.kindergarten_participation_by_year
   end
 
   def test_does_not_load_duplicate_data
@@ -66,6 +67,6 @@ class EnrollmentRepositoryTest < Minitest::Test
    "2013"=>0.487,
    "2014"=>0.49}
 
-    assert_equal e, result.kindergarten_participation
+    assert_equal e, result.kindergarten_participation_by_year
   end
 end
