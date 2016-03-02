@@ -42,14 +42,5 @@ class EnrollmentRepository
   end
 end
 
-# er = EnrollmentRepository.new
-# er.load_data({
-#   :enrollment => {
-#     :kindergarten => "./data/Kindergartners in full-day program.csv"
-#   }
-# })
-# #binding.pry
-# er = EnrollmentRepository.new
-# er.load_data('./data/Kindergartners in full-day program.csv')
 
 #p enrollment = er.find_by_name("ACADEMY 20")

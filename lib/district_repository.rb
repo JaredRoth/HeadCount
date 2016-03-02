@@ -11,6 +11,7 @@ class DistrictRepository
     @districts = []
   end
 
+
   def load_data(file)
     filename = String === file ? file : file[:enrollment][:kindergarten]
     data = CSV.open filename, headers: true, header_converters: :symbol
@@ -20,11 +21,14 @@ class DistrictRepository
         districts << District.new(location: row[:location])
       end
     end
+
+
   end
 
-  def create_enrollment_repo()
+  def create_enrollment_repo(file)
 
-  end 
+  end
+  # district.enrollment.kindergarten_participation_in_year(2010) # => 0.391
 
   def all
     districts

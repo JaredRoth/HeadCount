@@ -57,4 +57,9 @@ class DistrictRepositoryTest < Minitest::Test
     assert_equal "COLORADO", districts[0].name
   end
 
+  def test_district_repo_creates_enrollment_repo
+
+    assert_equal object(of_enroll_repo), @dr.create_enrollment_repo(something)
+  end
+
 end
