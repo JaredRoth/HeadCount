@@ -5,7 +5,7 @@ class EnrollmentRepositoryTest < Minitest::Test
 
   def setup
     @er = EnrollmentRepository.new
-    @er.load_data('./data/sample_kindergartners_file.csv')
+    @er.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
   end
 
   def test_can_load_all_data

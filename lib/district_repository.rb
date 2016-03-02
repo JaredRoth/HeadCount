@@ -22,6 +22,10 @@ class DistrictRepository
     end
   end
 
+  def create_enrollment_repo()
+
+  end 
+
   def all
     districts
   end

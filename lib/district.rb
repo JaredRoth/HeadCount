@@ -10,5 +10,6 @@ class District
     @name = args[:location].upcase
   end
 
-  
+
+
 end
