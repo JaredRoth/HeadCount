@@ -68,4 +68,5 @@ class DistrictRepositoryTest < Minitest::Test
     assert_equal "COLORADO", @dr.find_by_name("COLORADO").enrollment.name
     assert_equal "COLORADO", @dr.districts[0].enrollment.name
   end
+
 end
