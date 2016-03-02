@@ -9,7 +9,7 @@ class HeadcountAnalyst
 
 
   def  compute_average_from_participation_hash(participation_hash)
-    participation_total = participation_hash.reduce(0){|sum,kv| sum + kv[1]}
+    participation_total = participation_hash.values.reduce(:+)
     total_years = participation_hash.length
 
     participation_total / total_years
@@ -55,4 +55,4 @@ end
 
 dr = DistrictRepository.new
 ha = HeadcountAnalyst.new(dr)
-ha.kindergarten_participation_rate_variation('ACADEMY 20', against: 'Colorado')
+p ha.kindergarten_participation_rate_variation('ACADEMY 20', against: 'Colorado')

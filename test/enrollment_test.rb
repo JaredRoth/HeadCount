@@ -7,7 +7,7 @@ class EnrollmentTest < Minitest::Test
 
   def test_enrollment_provides_kindergarten_participiation_for_district
     nk = {"2010" => 0.391, "2011" => 0.353, "2012" => 0.267}
-    assert_equal nk, @e.kindergarten_participation
+    assert_equal nk, @e.kindergarten_participation_by_year
   end
 
   def test_kindergarten_participation_returns_hash_with_year

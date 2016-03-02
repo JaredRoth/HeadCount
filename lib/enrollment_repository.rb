@@ -11,31 +11,22 @@ class EnrollmentRepository
     @enrollments = []
   end
 
-  def load_data(file)
-    filename = String === file ? file : file[:enrollment][:kindergarten]
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-    build_repo(data)
-  end
-
   def build_repo(data)
-    data_by_location = data.group_by do |row|
+    data_grouped_by_location = data.group_by do |row|
       row[:location]
     end
-    create_enrollments(data_by_location)
-  end
-
-  def load_data_info(district_name)
-    district_in.each { |district| enrollments << district}
+    create_enrollments(data_grouped_by_location)
   end
 
   def find_by_name(location)
     enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
   end
 
-  def create_enrollments(data_by_location)
+  def create_enrollments(data_grouped_by_location)
     participation = {}
 
-    data_by_location.each do |key,value|
+    data_grouped_by_location.each do |key,value|
+
       value.each do |line|
         participation[line[:timeframe]] = line[:data]
       end

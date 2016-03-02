@@ -1,4 +1,3 @@
-require 'csv'
 require 'pry'
 require './lib/enrollment'
 
