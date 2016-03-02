@@ -1,5 +1,6 @@
 require 'pry'
 
+
 class Enrollment
 
   attr_accessor :name
@@ -21,9 +22,10 @@ class Enrollment
 
   def kindergarten_participation_by_year
        @kindergarten_participation
+
   end
 
-  def kindergarten_participation_in_year(year)
-    @kindergarten_participation.fetch(year.to_s, nil)
+  def kindergarten_participation_in_year(year) @kindergarten_participation.fetch(year.to_s, nil)
+
   end
 end

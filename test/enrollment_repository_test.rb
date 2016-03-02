@@ -54,7 +54,7 @@ class EnrollmentRepositoryTest < Minitest::Test
   def test_enrollment_contains_merged_data
     result = @er.enrollments.find { |enroll| enroll.name == "ACADEMY 20"}
 
-    e = {"2007"=>0.0,
+    e = {"2007"=>0.391,
    "2006"=>0.353,
    "2005"=>0.267,
    "2004"=>0.302,
