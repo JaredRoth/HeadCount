@@ -47,8 +47,7 @@ class DistrictRepository
   end
 
   def find_all_matching(location)
-    districts.find_all { |district|
-    district.name.include?(location.upcase)}
+    districts.find_all { |district| district.name.include?(location.upcase)}
   end
 
 end

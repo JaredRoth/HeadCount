@@ -2,7 +2,7 @@ require 'pry'
 
 class Enrollment
 
-  attr_accessor :name, :kindergarten_participation
+  attr_accessor :name
 
   def initialize(args)
     @name = args[:name].upcase
