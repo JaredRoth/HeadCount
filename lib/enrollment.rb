@@ -25,7 +25,7 @@ class Enrollment
 
   end
 
-  def kindergarten_participation_in_year(year) @kindergarten_participation.fetch(year.to_s, nil)
-
+  def kindergarten_participation_in_year(year) 
+    @kindergarten_participation.fetch(year.to_s, nil)
   end
 end
