@@ -1,5 +1,4 @@
-require 'pry'
-require './lib/enrollment'
+require_relative 'enrollment'
 
 class District
 

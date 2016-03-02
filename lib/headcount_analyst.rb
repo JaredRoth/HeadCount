@@ -1,16 +1,14 @@
-require './lib/district_repository'
+require_relative 'district_repository'
 class HeadcountAnalyst
 
-  attr_reader :load_data, :dr
+  attr_reader :dr
 
   def initialize(dr)
     @dr = dr
-    @dr.load_data('./data/sample_kindergartners_file.csv')
-
   end
 
 
-  def  compute_average_from_participation_hash(participation_hash)
+  def compute_average_from_participation_hash(participation_hash)
     participation_total = participation_hash.values.reduce(:+)
     total_years = participation_hash.length
 
@@ -25,14 +23,12 @@ class HeadcountAnalyst
     compute_average_from_participation_hash(participation_hash)
   end
 
-
   def kindergarten_participation_rate_variation(district_name, params)
 
     district_average = calculate_participation_average(district_name)
 
     state_name = params[:against]
     state_average = calculate_participation_average(state_name)
-    # binding.pry
 
     truncate(district_average / state_average)
   end
@@ -59,6 +55,8 @@ class HeadcountAnalyst
 
 end
 
-dr = DistrictRepository.new
-ha = HeadcountAnalyst.new(dr)
-p ha.kindergarten_participation_rate_variation('ACADEMY 20', against: 'Colorado')
+
+# dr = DistrictRepository.new
+# dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
+# ha = HeadcountAnalyst.new(dr)
+# p ha.kindergarten_participation_rate_variation('ACADEMY 20', against: 'Colorado')
