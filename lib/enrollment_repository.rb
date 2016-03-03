@@ -13,16 +13,18 @@ class EnrollmentRepository
     @enrollments = []
   end
 
-  def load_data(file)
-    filename = String === file ? file : file[:enrollment][:kindergarten]
+  def load_data(files)
+    filename = [files[:enrollment][:kindergarten],files[:enrollment][:high_school_graduation]]
     data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
     build_repo(data)
+
   end
 
   def build_repo(data)
     data_grouped_by_location = data.group_by do |row|
       row[:location]
     end
+    # binding.pry
     create_enrollments(data_grouped_by_location)
   end
 
@@ -37,7 +39,6 @@ class EnrollmentRepository
 
       value.each do |line|
         participation[line[:timeframe]] = sanitize_data(line[:data])
-        #binding.pry if key.downcase == 'academy 20'
       end
 
       enrollments << Enrollment.new({name: key, kindergarten_participation: participation})

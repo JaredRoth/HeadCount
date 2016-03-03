@@ -11,7 +11,6 @@ class HeadcountAnalyst
   def compute_average_from_participation_hash(participation_hash)
     participation_total = participation_hash.values.reduce(:+)
     total_years = participation_hash.length
-
     participation_total / total_years
   end
 
@@ -23,12 +22,9 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_rate_variation(district_name, params)
-
     district_average = calculate_participation_average(district_name)
-
     state_name = params[:against]
     state_average = calculate_participation_average(state_name)
-
     truncate(district_average / state_average)
   end
 
@@ -50,6 +46,12 @@ class HeadcountAnalyst
       [year,truncate(value/state_value)] unless state_value.nil?
     end.to_h
   end
+
+  def kindergarten_participation_against_high_school_graduation(district_name
+    # compares kindergarten_participation_rate_variation to graduation_rate_by_year
+  end
+
+  def 
 
 
 end
