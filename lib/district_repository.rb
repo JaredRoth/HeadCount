@@ -9,30 +9,50 @@ class DistrictRepository
   def initialize
     @districts = []
     @enrollment_repo = EnrollmentRepository.new
+    # @statewide_repo  = StatewideRepository.new
+    # @economic_repo   = EconomicRepository.new
   end
 
+  def load_data(files)
+    create_district_repo(files)
 
-  def load_data(file)
-
-    filename = file[:enrollment][:kindergarten]
-
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-    build_all_repos(data)
-  end
-
-  def build_all_repos(data)
-    create_district_repo(data)
-    # @enrollment_repo.build_repo(data)
-    insert_enrollment_info_into_districts
-  end
-
-  def insert_enrollment_info_into_districts
-    districts.each do |district|
-      district.enrollment = @enrollment_repo.find_by_name(district.name)
+    files.each do |repo_type, sources|
+      build_correct_repo(repo_type, sources)
     end
   end
 
-  def create_district_repo(data)
+  def build_correct_repo(key, sources)
+    repos = {enrollment: build_enrollment_repo(sources),
+    # statewide_testing:   build_statewide_repo(sources),
+    # economic_profile:    build_economic_repo(sources)
+  }
+    repos[key]
+  end
+
+  def build_enrollment_repo(sources)
+    @enrollment_repo.load_data(sources)
+    insert_info_into_districts(@enrollment_repo)
+  end
+
+  def build_statewide_repo(sources)
+    @statewide_repo.load_data(sources)
+    insert_info_into_districts(@statewide_repo)
+  end
+
+  def build_economic_repo(sources)
+    @economic_repo.load_data(sources)
+    insert_info_into_districts(@economic_repo)
+  end
+
+  def insert_info_into_districts(repo)
+    districts.each do |district|
+      district.enrollment = repo.find_by_name(district.name)
+    end
+  end
+
+  def create_district_repo(files)
+    filename = files[:enrollment][:kindergarten]
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
     data.each do |row|
       next if find_by_name(row[:location].upcase)
       districts << District.new(name: row[:location])

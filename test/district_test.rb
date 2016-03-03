@@ -3,8 +3,6 @@ require_relative '../lib/district'
 
 
 class DistrictTest < Minitest::Test
-
-
   def setup
     @d4 = District.new(name:"Galvanize", timeframe: "2012", dataformat:"Percent", data: "0.342")
   end
