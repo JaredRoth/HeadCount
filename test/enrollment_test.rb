@@ -26,7 +26,7 @@ class EnrollmentTest < Minitest::Test
   end
 
   def test_truncates_hash
-    result = @e.truncate_hash_value({2010 => 0.391143, 2011 => 0.353234, 2012 => 0.267234})
+    result = @e.truncate_percentages({2010 => 0.391143, 2011 => 0.353234, 2012 => 0.267234})
     nk = {2010 => 0.391, 2011 => 0.353, 2012 => 0.267}
     assert_equal nk, result
   end

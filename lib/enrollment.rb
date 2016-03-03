@@ -7,15 +7,15 @@ class Enrollment
 
   def initialize(args)
     @name = args[:name].upcase
-    @kindergarten_participation = truncate_hash_value(args[:kindergarten_participation])
-    @high_school_graduation = truncate_hash_value(args[:high_school_graduation])
+    @kindergarten_participation = truncate_percentages(args[:kindergarten_participation])
+    @high_school_graduation = {} || truncate_percentages(args[:high_school_graduation])
   end
 
   def truncate(value)
     ((value * 1000).floor / 1000.0)
   end
 
-  def truncate_hash_value(hash)
+  def truncate_percentages(hash)
     hash.map do |year,value|
       [year.to_i, truncate(value.to_f)]
     end.to_h
@@ -33,7 +33,7 @@ class Enrollment
     @high_school_graduation
   end
 
-  def graduation_rate_in_year
-    @high_school_graduation
-  end 
+  def graduation_rate_in_year(year)
+    @high_school_graduation.fetch(year, nil)
+  end
 end
