@@ -20,6 +20,7 @@ class DistrictRepository < Repository
 
   def find_by_name(location)
     districts.find { |district| district.upcase == location.upcase }
+    # binding.pry
   end
 
   def find_all_matching(location)

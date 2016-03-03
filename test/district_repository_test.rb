@@ -6,17 +6,28 @@ class DistrictRepositoryTest < Minitest::Test
 
   def setup
     @dr = DistrictRepository.new
-    @dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
+    @dr.load_data({
+      :enrollment => {
+        :kindergarten => "./data/sample_kindergartners_file.csv",
+        :high_school_graduation => "./data/sample_high_school_graduation.csv"
+      }
+    })
+
   end
 
-  def test_loads_data
-    skip
-    assert_equal "COLORADO", @dr.districts[0].name
+  def test_loads_kindergartner_data_only
+
+    assert_equal "ACADEMY 20", @dr.districts[1]
   end
 
-  def test_loads_entire_file
-    skip
-    assert_equal 7, @dr.districts.count
+  def test_loads_high_school_data_only
+
+    assert_equal, @dr.districts[0]
+  end
+
+  def test_loads_high_school_and_kindergartner_data
+
+    assert_equal 181, @dr.districts.count
   end
 
   def test_can_find_by_school_name
@@ -26,7 +37,7 @@ class DistrictRepositoryTest < Minitest::Test
     assert_equal "ACADEMY 20", district.name
   end
 
-  def test_can_find_one_matching_school_by_name
+  def test_can_find_one_matching_school_by_name_for_kindergatner
     skip
     districts = @dr.find_all_matching("Akron")
 

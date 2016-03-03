@@ -17,7 +17,6 @@ class Repository
         }
       }
     }
-    #binding.pry
     data
   end
 

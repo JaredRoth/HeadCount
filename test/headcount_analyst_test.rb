@@ -10,7 +10,7 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_Kindergarten_participation_average
-    skip
+    
     assert_equal 0.766, @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
   end
 
