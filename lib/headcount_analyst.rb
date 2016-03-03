@@ -42,16 +42,15 @@ class HeadcountAnalyst
     state = @dr.find_by_name(state_name)
     district_participation_hash.map do |year,value|
       state_value = state.enrollment.kindergarten_participation_in_year(year)
-      [year,truncate(value/state_value)] unless state_value.nil?
+      if state_value.nil?
+        "Invalid data"
+      elsif state_value == 0
+        [year, 0.0]
+      else
+        [year,truncate(value/state_value)]
+      end
     end.to_h
   end
-
-  def kindergarten_participation_against_high_school_graduation(district_name
-    # compares kindergarten_participation_rate_variation to graduation_rate_by_year
-  end
-
-  def 
-
 
 end
 

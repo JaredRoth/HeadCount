@@ -12,26 +12,23 @@ class EnrollmentRepositoryTest < Minitest::Test
     @er = EnrollmentRepository.new
     @er.load_data({
       :enrollment => {
-        :kindergarten           => "./test_data/sample_kindergartners_file.csv",
-        :high_school_graduation => "./test_data/sample_high_school_graduation.csv"
+        :kindergarten => "./data/Kindergartners in full-day program.csv",
+        :high_school_graduation     => "./test_data/sample_high_school_graduation.csv"
       }
     })
   end
 
   def test_can_load_all_data
-    assert_equal 7, @er.enrollments.length
+    assert_equal 181, @er.enrollments.length
+  end
+
+  def test_can_find_specific_district_value
+
   end
 
   def test_can_load_from_multiple_sources
-    er = EnrollmentRepository.new
-    er.load_data({
-      :enrollment => {
-        :kindergarten => "./data/sample_kindergartners_file.csv",
-        :high_school_graduation => "./data/sample_high_school_graduation.csv"
-      }
-    })
-    assert er.enrollments[0].kindergarten_participation_by_year
-    assert_equal "this", er.enrollments[0].graduation_rate_by_year
+    assert @er.enrollments[0].kindergarten_participation_by_year
+    assert @er.enrollments[0].graduation_rate_by_year
   end
 
   def test_can_load_single_data
@@ -70,7 +67,7 @@ class EnrollmentRepositoryTest < Minitest::Test
 
   def test_enrollment_creates_array_of_enrollments
     refute @er.enrollments.nil?
-    assert_equal 7, @er.enrollments.length
+    assert_equal 181, @er.enrollments.length
   end
 
   def test_enrollment_contains_merged_data
