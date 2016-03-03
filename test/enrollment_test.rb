@@ -3,7 +3,10 @@ require_relative '../lib/enrollment'
 
 class EnrollmentTest < Minitest::Test
   def setup
-    @e = Enrollment.new({:name => "ACADEMY 20", :kindergarten_participation => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677}})
+    @e = Enrollment.new({   :name => "ACADEMY 20",
+      :kindergarten_participation => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677},
+      :high_school                => {2010 => 0.895, 2011 => 0.895, 2012 => 0.889, 2013 => 0.913, 2014 => 0.898,}
+      })
   end
 
   def test_enrollment_provides_kindergarten_participiation_for_district
@@ -36,21 +39,17 @@ class EnrollmentTest < Minitest::Test
   end
 
   def test_highschool_graduation_for_specific_year
-    skip
-    assert_equal 0.895, @e.enrollment.graduation_rate_in_year(2010)
+    assert_equal 0.895, @e.graduation_rate_in_year(2010)
   end
 
   def test_graduation_rate_by_year
-    skip
-    nh = {{ 2010 => 0.895, 2011 => 0.895, 2012 => 0.889, 2013 => 0.913, 2014 => 0.898}}
+    nh = { 2010 => 0.895, 2011 => 0.895, 2012 => 0.889, 2013 => 0.913, 2014 => 0.898}
 
     assert_equal nh, @e.graduation_rate_by_year
   end
 
   def test_highschool_gradutation_rate_by_year_returns_hash_with_year
-    skip
-    nk = {2010 => 0.391, 2011 => 0.353, 2012 => 0.267}
+    nk = {2010 => 0.895, 2011 => 0.895, 2012 => 0.889, 2013 => 0.913, 2014 => 0.898,}
     assert_equal nk, @e.graduation_rate_by_year
   end
-
 end

@@ -25,11 +25,12 @@ class EnrollmentRepository
       kindergarten_info[key] = value
     end
 
-    high_school = {}
-    hashes[:high_school_graduation].each do |key, value|
-      high_school[key] = value
+    if files[:enrollment][:high_school_graduation]
+      high_school = {}
+      hashes[:high_school_graduation].each do |key, value|
+        high_school[key] = value
+      end
     end
-
     kindergarten_info.each do |key, value|
       enrollments << Enrollment.new({name: key,
                                     kindergarten_participation: value,

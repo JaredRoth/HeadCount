@@ -7,8 +7,8 @@ class Enrollment
 
   def initialize(args)
     @name = args[:name].upcase
-    @kindergarten_participation = truncate_percentages(args[:kindergarten_participation])
-    @high_school_graduation = {} || truncate_percentages(args[:high_school_graduation])
+    @participation = {}
+    retrieve_data(args)
   end
 
   def truncate(value)
@@ -22,18 +22,25 @@ class Enrollment
   end
 
   def kindergarten_participation_by_year
-    @kindergarten_participation
+    @participation[:kindergarten_participation]
   end
 
   def kindergarten_participation_in_year(year)
-    @kindergarten_participation.fetch(year, nil)
+    @participation[:kindergarten_participation].fetch(year, nil)
   end
 
   def graduation_rate_by_year
-    @high_school_graduation
+    @participation[:high_school]
   end
 
   def graduation_rate_in_year(year)
-    @high_school_graduation.fetch(year, nil)
+    @participation[:high_school].fetch(year, nil)
+  end
+
+  def retrieve_data(args)
+    args.each_pair do |key,value|
+      next if key === :name
+      @participation[key] = truncate_percentages(args[key])
+    end
   end
 end

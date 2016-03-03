@@ -12,8 +12,8 @@ class EnrollmentRepositoryTest < Minitest::Test
     @er = EnrollmentRepository.new
     @er.load_data({
       :enrollment => {
-        :kindergarten => "./data/sample_kindergartners_file.csv",
-        :high_school_graduation => "./data/High school graduation rates.csv"
+        :kindergarten           => "./test_data/sample_kindergartners_file.csv",
+        :high_school_graduation => "./test_data/sample_high_school_graduation.csv"
       }
     })
   end
@@ -23,7 +23,6 @@ class EnrollmentRepositoryTest < Minitest::Test
   end
 
   def test_can_load_from_multiple_sources
-    skip
     er = EnrollmentRepository.new
     er.load_data({
       :enrollment => {
@@ -32,7 +31,7 @@ class EnrollmentRepositoryTest < Minitest::Test
       }
     })
     assert er.enrollments[0].kindergarten_participation_by_year
-    assert er.enrollments[0].graduation_rate_by_year
+    assert_equal "this", er.enrollments[0].graduation_rate_by_year
   end
 
   def test_can_load_single_data
@@ -44,16 +43,16 @@ class EnrollmentRepositoryTest < Minitest::Test
   def test_find_by_name_returns_enrollment_object
     result = @er.find_by_name("ADAMS-ARAPAHOE 28J")
     e = {2007=>0.473,
-      2006=>0.37,
-      2005=>0.201,
-      2004=>0.174,
-      2008=>0.479,
-      2009=>0.73,
-      2010=>0.922,
-      2011=>0.95,
-      2012=>0.973,
-      2013=>0.976,
-      2014=>0.971}
+         2006=>0.37,
+         2005=>0.201,
+         2004=>0.174,
+         2008=>0.479,
+         2009=>0.73,
+         2010=>0.922,
+         2011=>0.95,
+         2012=>0.973,
+         2013=>0.976,
+         2014=>0.971}
 
     assert_equal e, result.kindergarten_participation_by_year
   end
@@ -92,18 +91,9 @@ class EnrollmentRepositoryTest < Minitest::Test
     assert_equal e, result.kindergarten_participation_by_year
   end
 
-  def test_load_data_directly
-    skip
-    er = EnrollmentRepository.new
-    er.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
-
-      assert_equal 7, @er.enrollments.length
-  end
-
   def test_data_can_be_found_by_name
-    skip
       enrollment = @er.find_by_name("ACADEMY 20")
       assert_equal 0.436, enrollment.kindergarten_participation_in_year(2010)
-    end
+  end
 
 end
