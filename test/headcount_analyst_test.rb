@@ -36,6 +36,7 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_truncate_any_given_value
+    skip
     assert_equal 0.432, @ha.truncate(0.432154)
   end
 
@@ -67,6 +68,7 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_need_to_create_more_test
+    skip
 
   end
 

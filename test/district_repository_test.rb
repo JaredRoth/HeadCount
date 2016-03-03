@@ -10,20 +10,24 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_loads_data
+    skip
     assert_equal "COLORADO", @dr.districts[0].name
   end
 
   def test_loads_entire_file
+    skip
     assert_equal 7, @dr.districts.count
   end
 
   def test_can_find_by_school_name
+    skip
     district = @dr.find_by_name("ACADEMY 20")
 
     assert_equal "ACADEMY 20", district.name
   end
 
   def test_can_find_one_matching_school_by_name
+    skip
     districts = @dr.find_all_matching("Akron")
 
     assert_equal 1, districts.length
@@ -32,6 +36,7 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_can_find_all_matching_schools_by_name
+    skip
     districts = @dr.find_all_matching("adams")
 
     assert_equal 2, districts.length
@@ -40,18 +45,21 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_will_return_nil_if_invalid_name
+    skip
     district = @dr.find_by_name("20")
 
     assert_nil district
   end
 
   def test_find_by_name_is_case_insensitive
+    skip
     district = @dr.find_by_name("AcAdEmY 20")
 
     assert_equal "ACADEMY 20", district.name
   end
 
   def test_find_all_districts_by_name_is_case_insensitive
+    skip
     districts = @dr.find_all_matching("COloRADo")
 
     assert_equal 1, districts.length
