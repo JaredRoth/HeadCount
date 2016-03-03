@@ -13,14 +13,16 @@ class DistrictRepository
 
 
   def load_data(file)
-    filename = String === file ? file : file[:enrollment][:kindergarten]
+
+    filename = file[:enrollment][:kindergarten]
+
     data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
     build_all_repos(data)
   end
 
   def build_all_repos(data)
     create_district_repo(data)
-    @enrollment_repo.build_repo(data)
+    # @enrollment_repo.build_repo(data)
     insert_enrollment_info_into_districts
   end
 
@@ -37,10 +39,6 @@ class DistrictRepository
     end
   end
 
-  def load_data_info(district_in)
-    district_in.each { |district| districts << district}
-  end
-
   def find_by_name(location)
     districts.find { |district| district.name == location.upcase }
   end
@@ -48,5 +46,4 @@ class DistrictRepository
   def find_all_matching(location)
     districts.find_all { |district| district.name.include?(location.upcase)}
   end
-
 end

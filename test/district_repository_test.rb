@@ -27,8 +27,8 @@ class DistrictRepositoryTest < Minitest::Test
     districts = @dr.find_all_matching("Akron")
 
     assert_equal 1, districts.length
-    assert_equal "AKRON R-1", districts.first.name
-    assert_equal "AKRON R-1", districts.last.name
+    assert_equal "AKRON R-1", @dr.find_all_matching("Akron").first.name
+    assert_equal "AKRON R-1", @dr.find_all_matching("Akron").last.name
   end
 
   def test_can_find_all_matching_schools_by_name
@@ -59,6 +59,7 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_load_data_builds_enrollment_repo
+    skip
     result = @dr.enrollment_repo.enrollments
 
     assert_equal "COLORADO", result[0].name
@@ -66,6 +67,7 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_enrollments_link_to_districts
+    skip
     assert_equal "COLORADO", @dr.find_by_name("COLORADO").enrollment.name
     assert_equal "COLORADO", @dr.districts[0].enrollment.name
   end
