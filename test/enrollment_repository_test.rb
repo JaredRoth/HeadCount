@@ -23,7 +23,7 @@ class EnrollmentRepositoryTest < Minitest::Test
   end
 
   def test_can_load_from_multiple_sources
-    skip
+
     er = EnrollmentRepository.new
     er.load_data({
       :enrollment => {
@@ -101,7 +101,7 @@ class EnrollmentRepositoryTest < Minitest::Test
   end
 
   def test_data_can_be_found_by_name
-    skip
+
       enrollment = @er.find_by_name("ACADEMY 20")
       assert_equal 0.436, enrollment.kindergarten_participation_in_year(2010)
     end

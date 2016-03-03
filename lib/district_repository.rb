@@ -1,49 +1,41 @@
+require_relative 'repository'
 require_relative 'district'
 require_relative 'enrollment_repository'
 require 'csv'
 
-class DistrictRepository
+class DistrictRepository < Repository
 
-  attr_reader :districts, :enrollment_repo
+  attr_reader :districts
 
   def initialize
-    @districts = []
-    @enrollment_repo = EnrollmentRepository.new
+    @data = load_data({
+    :enrollment => {
+      :kindergarten => "./data/Kindergartners in full-day program.csv",
+      :high_school_graduation => "./data/High school graduation rates.csv"
+    }
+  }
+
+    )
+    #binding.pry
+    @districts = group_data.keys
   end
 
 
-  def load_data(file)
-
-    filename = file[:enrollment][:kindergarten]
-
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-    build_all_repos(data)
+  def group_data
+    @data.group_by{|h| h[:location]}
   end
 
-  def build_all_repos(data)
-    create_district_repo(data)
-    # @enrollment_repo.build_repo(data)
-    insert_enrollment_info_into_districts
-  end
-
-  def insert_enrollment_info_into_districts
-    districts.each do |district|
-      district.enrollment = @enrollment_repo.find_by_name(district.name)
-    end
-  end
-
-  def create_district_repo(data)
-    data.each do |row|
-      next if find_by_name(row[:location].upcase)
-      districts << District.new(name: row[:location])
-    end
-  end
 
   def find_by_name(location)
-    districts.find { |district| district.name == location.upcase }
+    districts.find { |district| district.upcase == location.upcase }
   end
 
   def find_all_matching(location)
-    districts.find_all { |district| district.name.include?(location.upcase)}
+    districts.find_all { |district| district.upcase.include?(location.upcase)}
   end
 end
+
+dr = DistrictRepository.new
+p dr.find_by_name("ADAMS COUNTY 14")
+p dr.find_by_name("Not Found Should Be nil")
+p dr.find_all_matching("Ad")

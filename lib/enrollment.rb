@@ -8,7 +8,7 @@ class Enrollment
   def initialize(args)
     @name = args[:name].upcase
     @kindergarten_participation = truncate_percentages(args[:kindergarten_participation])
-    @high_school_graduation = {} || truncate_percentages(args[:high_school_graduation])
+    @high_school_graduation =  truncate_percentages(args[:high_school_graduation]) || {}
   end
 
   def truncate(value)

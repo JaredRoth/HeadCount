@@ -1,3 +1,4 @@
+require_relative 'enrollment_repository'
 require_relative 'enrollment'
 
 class District
@@ -7,7 +8,7 @@ class District
 
   def initialize(args)
     @name             = args[:name].upcase
-    @enrollment       = nil
+    @enrollment       = EnrollmentRepository.new
     @statewide_test   = nil
     @economic_profile = nil
   end

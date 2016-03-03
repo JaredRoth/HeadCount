@@ -46,11 +46,14 @@ class HeadcountAnalyst
     end.to_h
   end
 
-  def kindergarten_participation_against_high_school_graduation(district_name
-    # compares kindergarten_participation_rate_variation to graduation_rate_by_year
+  def kindergarten_participation_against_high_school_graduation(district_name)
+      # compares kindergarten_participation_rate_variation to graduation_rate_by_year
   end
 
-  def 
+  def kindergarten_participation_correlates_with_high_school_graduation(district_name)
+
+
+  end
 
 
 end

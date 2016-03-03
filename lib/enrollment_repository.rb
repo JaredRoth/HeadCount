@@ -57,11 +57,3 @@ class EnrollmentRepository
     enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
   end
 end
-#
-# e_repo = EnrollmentRepository.new
-# e_repo.load_data({
-#   :enrollment => {
-#     :kindergarten => "./data/sample_kindergartners_file.csv",
-#     :high_school_graduation => "./data/High school graduation rates.csv"
-#   }
-# })
