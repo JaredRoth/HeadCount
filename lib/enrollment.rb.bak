@@ -4,11 +4,12 @@ require_relative 'module_helper'
 class Enrollment
   include Helper
 
-  attr_reader :name, :kindergarten_participation
+  attr_accessor :name
 
   def initialize(args)
-    @name = args[:name]
-    @kindergarten_participation = args[:participation]
+    @name = args[:name].upcase
+    @kindergarten_participation = truncate_percentages(args[:kindergarten_participation])
+    @high_school_graduation =  truncate_percentages(args[:high_school_graduation]) || {}
   end
 
   def truncate_percentages(hash)

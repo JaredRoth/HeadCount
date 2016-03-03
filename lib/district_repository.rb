@@ -9,22 +9,14 @@ class DistrictRepository < Repository
 
   def initialize
     @data = load_data({
-    :enrollment => {
-      :kindergarten => "./data/Kindergartners in full-day program.csv",
-      :high_school_graduation => "./data/High school graduation rates.csv"
-    }
-  }
-
-    )
+      :enrollment => {
+        :kindergarten => "./data/Kindergartners in full-day program.csv",
+        :high_school_graduation => "./data/High school graduation rates.csv"
+      }
+    })
     #binding.pry
     @districts = group_data.keys
   end
-
-
-  def group_data
-    @data.group_by{|h| h[:location]}
-  end
-
 
   def find_by_name(location)
     districts.find { |district| district.upcase == location.upcase }
@@ -34,8 +26,10 @@ class DistrictRepository < Repository
     districts.find_all { |district| district.upcase.include?(location.upcase)}
   end
 end
-
+=begin
 dr = DistrictRepository.new
 p dr.find_by_name("ADAMS COUNTY 14")
 p dr.find_by_name("Not Found Should Be nil")
 p dr.find_all_matching("Ad")
+binding.pry
+=end

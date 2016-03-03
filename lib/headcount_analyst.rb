@@ -1,6 +1,7 @@
+require_relative 'module_helper'
 require_relative 'district_repository'
 class HeadcountAnalyst
-
+  include Helper
   attr_reader :dr
 
   def initialize(dr)
@@ -25,10 +26,6 @@ class HeadcountAnalyst
     state_name = params[:against]
     state_average = calculate_participation_average(state_name)
     truncate(district_average / state_average)
-  end
-
-  def truncate(value)
-    ((value * 1000).floor / 1000.0)
   end
 
   def kindergarten_participation_rate_variation_trend(district_name, params)

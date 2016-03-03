@@ -21,4 +21,8 @@ class Repository
     data
   end
 
+  def group_data
+    @data.group_by{|h| h[:location].upcase}
+  end
+
 end
