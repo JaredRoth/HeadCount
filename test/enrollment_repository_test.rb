@@ -22,6 +22,19 @@ class EnrollmentRepositoryTest < Minitest::Test
     assert_equal 7, @er.enrollments.length
   end
 
+  def test_can_load_from_multiple_sources
+    skip
+    er = EnrollmentRepository.new
+    er.load_data({
+      :enrollment => {
+        :kindergarten => "./data/sample_kindergartners_file.csv",
+        :high_school_graduation => "./data/sample_high_school_graduation.csv"
+      }
+    })
+    assert er.enrollments[0].kindergarten_participation_by_year
+    assert er.enrollments[0].graduation_rate_by_year
+  end
+
   def test_can_load_single_data
     result = @er.find_by_name("ADAMS-ARAPAHOE 28J")
 
@@ -78,4 +91,19 @@ class EnrollmentRepositoryTest < Minitest::Test
 
     assert_equal e, result.kindergarten_participation_by_year
   end
+
+  def test_load_data_directly
+    skip
+    er = EnrollmentRepository.new
+    er.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
+
+      assert_equal 7, @er.enrollments.length
+  end
+
+  def test_data_can_be_found_by_name
+    skip
+      enrollment = @er.find_by_name("ACADEMY 20")
+      assert_equal 0.436, enrollment.kindergarten_participation_in_year(2010)
+    end
+
 end

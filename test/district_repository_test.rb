@@ -27,8 +27,8 @@ class DistrictRepositoryTest < Minitest::Test
     districts = @dr.find_all_matching("Akron")
 
     assert_equal 1, districts.length
-    assert_equal "AKRON R-1", districts.first.name
-    assert_equal "AKRON R-1", districts.last.name
+    assert_equal "AKRON R-1", @dr.find_all_matching("Akron").first.name
+    assert_equal "AKRON R-1", @dr.find_all_matching("Akron").last.name
   end
 
   def test_can_find_all_matching_schools_by_name

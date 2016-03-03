@@ -39,10 +39,6 @@ class DistrictRepository
     end
   end
 
-  def load_data_info(district_in)
-    district_in.each { |district| districts << district}
-  end
-
   def find_by_name(location)
     districts.find { |district| district.name == location.upcase }
   end

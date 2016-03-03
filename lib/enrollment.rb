@@ -17,13 +17,12 @@ class Enrollment
 
   def truncate_percentages(hash)
     hash.map do |year,value|
-        [year.to_i, truncate(value.to_f)]
+      [year.to_i, truncate(value.to_f)]
     end.to_h
   end
 
   def kindergarten_participation_by_year
-     @kindergarten_participation
-
+    @kindergarten_participation
   end
 
   def kindergarten_participation_in_year(year)
