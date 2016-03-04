@@ -60,6 +60,7 @@ class DistrictRepository
   end
 
   def find_by_name(location)
+    binding.pry if Hash === location
     districts.find { |district| district.name == location.upcase }
   end
 

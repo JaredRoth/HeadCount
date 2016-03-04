@@ -41,8 +41,8 @@ class HeadcountAnalystTest < Minitest::Test
     assert_equal 0.432, @ha.truncate(0.432154)
   end
 
-  def test_kindergarten_participation_variation_compare_to_the_high_school_graduation_variation?
-    skip
+  def test_kindergarten_participation_variation_compare_to_the_high_school_graduation_variation
+
     assert_equal 1.234, @ha.kindergarten_participation_against_high_school_graduation('ACADEMY 20')
   end
 
