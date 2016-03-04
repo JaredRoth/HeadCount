@@ -43,7 +43,8 @@ class HeadcountAnalystTest < Minitest::Test
 
   def test_kindergarten_participation_variation_compare_to_the_high_school_graduation_variation
 
-    assert_equal 1.234, @ha.kindergarten_participation_against_high_school_graduation('ACADEMY 20')
+    assert_equal 0.548, @ha.kindergarten_participation_against_high_school_graduation('MONTROSE COUNTY RE-1J')
+    assert_equal 0.800, @ha.kindergarten_participation_against_high_school_graduation('STEAMBOAT SPRINGS RE-2')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_rate_for_district

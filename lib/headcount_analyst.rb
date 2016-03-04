@@ -61,25 +61,30 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_against_high_school_graduation(district_name)
-    district = @dr.find_by_name(district_name)
-     kinder_average = district.enrollment.kindergarten_participation_by_year
-     high_school = district.enrollment.graduation_rate_by_year
-     k = compute_average_from_participation_hash(kinder_average)
-     h = compute_average_from_participation_hash(high_school)
-     graduation_variation = h/high_school_statewide_average
-     kinder_participation = k/kindergarten_statewide_average
-      x = truncate(kinder_participation/graduation_variation)
-     binding.pry
-    # compare the variance in kindergarten participation and high school graduation
+    truncate(kindergarden_participation_average(district_name) / high_school_participation_average(district_name))
+  end
+
+  def kindergarden_participation_average(district_name)
+    district = district = @dr.find_by_name(district_name)
+    kinder_average = district.enrollment.kindergarten_participation_by_year
+    k = compute_average_from_participation_hash(kinder_average)
+    kinder_participation = k/kindergarten_statewide_average
+  end
+
+  def high_school_participation_average(district_name)
+      district = @dr.find_by_name(district_name)
+    high_school = district.enrollment.graduation_rate_by_year
+    h = compute_average_from_participation_hash(high_school)
+    graduation_variation = h/high_school_statewide_average
   end
 
   def kindergarten_statewide_average
     calculate_kindergartner_participation_average("Colorado")
   end
-end
   def high_school_statewide_average
     calculate_high_school_participation_average("Colorado")
   end
+end
 
 
 # dr = DistrictRepository.new
