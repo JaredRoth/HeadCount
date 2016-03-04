@@ -1,7 +1,9 @@
 require 'pry'
+require_relative 'module_helper'
 
 
 class Enrollment
+  include Helper
 
   attr_accessor :name, :grade_data
 
@@ -9,10 +11,6 @@ class Enrollment
     @name = args[:name].upcase
     @grade_data = {}
     retrieve_data(args)
-  end
-
-  def truncate(value)
-    ((value * 1000).floor / 1000.0)
   end
 
   def truncate_percentages(hash)
