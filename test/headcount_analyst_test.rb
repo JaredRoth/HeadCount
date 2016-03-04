@@ -48,18 +48,21 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_rate_for_district
-    skip
-    assert_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'MONTROSE COUNTY RE-1J')
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'WELD COUNTY S/D RE-8')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_returns_true_if_above_70_percent_the_state
-    skip
-    assert_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'SIERRA GRANDE R-30')
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'PARK (ESTES PARK) R-3')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_returns_false_if_under_70_percent_the_state
-    skip
-    refute_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'someschool')
+    
+    refute_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'STATEWIDE')
   end
 
   def test_kindergarten_participation_accross_several_districts

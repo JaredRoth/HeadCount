@@ -1,5 +1,6 @@
 require_relative 'district_repository'
 class HeadcountAnalyst
+  include Helper
 
   attr_reader :dr
 
@@ -34,10 +35,10 @@ class HeadcountAnalyst
     truncate(district_average / state_average)
   end
 
-
   def truncate(value)
-    ((value * 1000).floor / 1000.0)
+    ((sanitize_data(value) * 1000).floor / 1000.0)
   end
+
 
   def kindergarten_participation_rate_variation_trend(district_name, params)
     state_name = params[:against]
@@ -60,12 +61,57 @@ class HeadcountAnalyst
     end.to_h
   end
 
-  def kindergarten_participation_against_high_school_graduation(district_name)
-    truncate(kindergarden_participation_average(district_name) / high_school_participation_average(district_name))
+  def kindergarten_participation_correlates_with_high_school_graduation(params)
+    if params.has_key?(:for)
+       district_name = params[:for]
+       if district_name.upcase == "STATEWIDE"
+         #process all districts in state
+         #need to map through kindergaten_high_school_correlation and count
+         #total true's then
+         #divide the number of trues against total list.length
+         all_states = @dr.districts.map { |district| district.name}
+         #  binding.pry
+         nTrue = all_states.count { |district_name|
+           correlated?(kindergaten_high_school_correlation(district_name)) == true
+         }
+         x = statewide_correlated?(nTrue.to_f/all_states.length.to_f)
+        
+       else
+         #process single district
+        x = correlated?(kindergaten_high_school_correlation(district_name))
+      end
+    else  #process :across
+      districts = params[:across]
+    end
   end
 
-  def kindergarden_participation_average(district_name)
-    district = district = @dr.find_by_name(district_name)
+  def statewide_correlated?(num)
+    num >= .70
+  end
+
+
+  def kindergaten_high_school_correlation(district_name)
+    begin
+    kinder = kindergarten_participation_average(district_name)
+    high_school = high_school_participation_average(district_name)
+    varification = truncate(kinder / high_school)
+  rescue Exception => e
+    puts e.message
+    print e.backtrace.join("\n")
+    end
+  end
+
+  def correlated?(num)
+    num >= 0.6  && num <= 1.5
+  end
+
+  def kindergarten_participation_against_high_school_graduation(district_name)
+    truncate(kindergarten_participation_average(district_name) / high_school_participation_average(district_name))
+  end
+
+  def kindergarten_participation_average(district_name)
+    binding.pry if Hash === district_name
+    district = @dr.find_by_name(district_name)
     kinder_average = district.enrollment.kindergarten_participation_by_year
     k = compute_average_from_participation_hash(kinder_average)
     kinder_participation = k/kindergarten_statewide_average
