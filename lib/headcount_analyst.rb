@@ -1,4 +1,6 @@
 require_relative 'district_repository'
+require_relative 'module_helper'
+
 class HeadcountAnalyst
   include Helper
 
@@ -33,11 +35,6 @@ class HeadcountAnalyst
     state_average = calculate_kindergartner_participation_average(state_name)
     truncate(district_average / state_average)
   end
-
-  def truncate(value)
-    ((sanitize_data(value) * 1000).floor / 1000.0)
-  end
-
 
   def kindergarten_participation_rate_variation_trend(district_name, params)
     state_name = params[:against]
