@@ -13,7 +13,6 @@ class EnrollmentRepository
   end
 
   def load_data(sources)
-    # sources = sources.has_key?(:enrollment) ? sources[:enrollment] : sources
     sources = sources[:enrollment] if sources.has_key?(:enrollment)
 
     sources.each do |source, filename|
@@ -36,12 +35,12 @@ class EnrollmentRepository
   def all_districts_info(data)
     data_grouped_by_location = group_data(data)
     hash_result = {}
-    data_grouped_by_location.each do |key,value|
+    data_grouped_by_location.each do |name, line|
       one_districts_info = {}
-      value.each do |line|
+      line.each do |line|
         one_districts_info[line[:timeframe]] = sanitize_data(line[:data])
       end
-      hash_result[key] = one_districts_info
+      hash_result[name] = one_districts_info
     end
     hash_result
   end
@@ -50,11 +49,3 @@ class EnrollmentRepository
     enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
   end
 end
-
-# e_repo = EnrollmentRepository.new
-# e_repo.load_data({
-#   :enrollment => {
-#     :kindergarten => "./test_data/sample_kindergartners_file.csv",
-#     :high_school_graduation => "./test_data/sample_high_school_graduation.csv"
-#   }
-# })

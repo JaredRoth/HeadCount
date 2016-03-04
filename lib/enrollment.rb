@@ -8,7 +8,7 @@ class Enrollment
   def initialize(args)
     @name = args[:name].upcase
     @grade_data = {}
-    retrieve_data(args)
+    organize_data(args)
   end
 
   def truncate(value)
@@ -37,7 +37,7 @@ class Enrollment
     @grade_data[:high_school_graduation].fetch(year, nil)
   end
 
-  def retrieve_data(args)
+  def organize_data(args)
     args.each_pair do |key,value|
       next if key == :name
       if key == :kindergarten_participation
