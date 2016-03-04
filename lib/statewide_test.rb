@@ -1,6 +1,3 @@
-require 'pry'
-
-
 class StatewideTest
 
   attr_accessor :name, :class_data
@@ -19,22 +16,15 @@ class StatewideTest
 
   def truncate(value)
     ((value * 1000).floor / 1000.0)
-  end 
+  end
 
   def organize_data(args)
     args.each_pair do |source, subject_hash|
       next if source == :name
+      @class_data[source] = {}
       subject_hash.each do |subject, data|
-        @class_data[source][subject] = truncate_percentages(args[subject])
+        @class_data[source][subject] = truncate_percentages(data)
       end
     end
   end
 end
-
-
-
-# location
-# race ethnicity / score
-# timeframe
-# dataformat
-# data

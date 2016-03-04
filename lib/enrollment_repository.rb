@@ -28,12 +28,12 @@ class EnrollmentRepository
     end
   end
 
-  def group_data(data)
+  def group_data_by_location(data)
     data.group_by { |row| row[:location].upcase }
   end
 
   def all_districts_info(data)
-    data_grouped_by_location = group_data(data)
+    data_grouped_by_location = group_data_by_location(data)
     hash_result = {}
     data_grouped_by_location.each do |name, line|
       one_districts_info = {}

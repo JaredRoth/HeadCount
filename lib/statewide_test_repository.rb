@@ -45,14 +45,11 @@ class StatewideRepository
   def all_districts_info(data)
     data_grouped_by_location = group_data_by_location(data)
     hash_result = {}
-
     data_grouped_by_location.each do |name,full_hash_of_data|
       data_grouped_by_subject = group_data_by_subject(full_hash_of_data)
       one_districts_info = {}
-
       data_grouped_by_subject.each do |subject, data|
         one_class_info = {}
-
         data.each do |line|
           one_class_info[line[:timeframe]] = sanitize_data(line[:data])
         end

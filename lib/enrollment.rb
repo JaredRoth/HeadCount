@@ -1,6 +1,3 @@
-require 'pry'
-
-
 class Enrollment
 
   attr_accessor :name, :grade_data
@@ -11,14 +8,14 @@ class Enrollment
     organize_data(args)
   end
 
-  def truncate(value)
-    ((value * 1000).floor / 1000.0)
-  end
-
   def truncate_percentages(hash)
     hash.map do |year,value|
       [year.to_i, truncate(value.to_f)]
     end.to_h
+  end
+
+  def truncate(value)
+    ((value * 1000).floor / 1000.0)
   end
 
   def kindergarten_participation_by_year
