@@ -61,15 +61,14 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_returns_false_if_under_70_percent_the_state
-    
-    refute_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'STATEWIDE')
+
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(:for => 'STATEWIDE')
   end
 
   def test_kindergarten_participation_accross_several_districts
-    skip
-    assert_equal true,
-    @ha.kindergarten_participation_correlates_with_high_school_graduation(
-  :across => ['district_1', 'district_2', 'district_3', 'district_4'])
+
+    districts = ["ACADEMY 20", 'PARK (ESTES PARK) R-3', 'YUMA SCHOOL DISTRICT 1']
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(:across => districts)
   end
 
 end

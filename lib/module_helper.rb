@@ -7,4 +7,8 @@ module Helper
     input.nan? ? 0 : input
   end
 
+  def truncate(value)
+    ((sanitize_data(value) * 1000).floor / 1000.0)
+  end
+
 end
