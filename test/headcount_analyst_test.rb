@@ -41,31 +41,34 @@ class HeadcountAnalystTest < Minitest::Test
     assert_equal 0.432, @ha.truncate(0.432154)
   end
 
-  def test_kindergarten_participation_variation_compare_to_the_high_school_graduation_variation?
-    skip
-    assert_equal 1.234, @ha.kindergarten_participation_against_high_school_graduation('ACADEMY 20')
+  def test_kindergarten_participation_variation_compare_to_the_high_school_graduation_variation
+
+    assert_equal 0.548, @ha.kindergarten_participation_against_high_school_graduation('MONTROSE COUNTY RE-1J')
+    assert_equal 0.800, @ha.kindergarten_participation_against_high_school_graduation('STEAMBOAT SPRINGS RE-2')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_rate_for_district
-    skip
-    assert_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'MONTROSE COUNTY RE-1J')
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'WELD COUNTY S/D RE-8')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_returns_true_if_above_70_percent_the_state
-    skip
-    assert_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'ACADEMY 20')
+
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'SIERRA GRANDE R-30')
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'PARK (ESTES PARK) R-3')
   end
 
   def test_Kindergarten_participation_predict_high_school_graduation_returns_false_if_under_70_percent_the_state
-    skip
-    refute_equal true, @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'someschool')
+
+    refute @ha.kindergarten_participation_correlates_with_high_school_graduation(:for => 'STATEWIDE')
   end
 
   def test_kindergarten_participation_accross_several_districts
-    skip
-    assert_equal true,
-    @ha.kindergarten_participation_correlates_with_high_school_graduation(
-  :across => ['district_1', 'district_2', 'district_3', 'district_4'])
+
+    districts = ["ACADEMY 20", 'PARK (ESTES PARK) R-3', 'YUMA SCHOOL DISTRICT 1']
+    assert @ha.kindergarten_participation_correlates_with_high_school_graduation(:across => districts)
   end
 
 end
