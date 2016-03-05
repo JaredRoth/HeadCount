@@ -35,7 +35,7 @@ class EnrollmentRepository
   def all_districts_info(data)
     data_grouped_by_location = group_data_by_location(data)
     hash_result = {}
-    data_grouped_by_location.each do |name, line|
+    data_grouped_by_location.each do |name, value|
       one_districts_info = {}
       value.each do |line|
         one_districts_info[line[:timeframe].to_i] = sanitize_data(line[:data])
