@@ -12,23 +12,26 @@ class StatewideRepositoryTest < Minitest::Test
         :kindergarten => "./data/Kindergartners in full-day program.csv"
       },
       :statewide_testing => {
-        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-        :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-        :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-        :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+        :third_grade => "./test_data/sample_3rd_grade.csv",
+        :eighth_grade => "./test_data/sample_8th_grade.csv",
+        :math => "./test_data/sample_math_proficiency.csv",
+        :reading => "./test_data/sample_reading_proficiency.csv",
+        :writing => "./test_data/sample_writing_proficiency.csv"
       }
     })
     @sr = dr.statewide_repo
   end
 
-  def test_can_load_all_data
-    assert_equal 181, @sr.statewide_tests.length
+  def test_can_load_all_districts
+    assert_equal 7, @sr.statewide_tests.length
   end
 
-  def test_can_load_from_multiple_sources
-    refute_nil @sr.statewide_tests[0]
-    refute_nil @sr.statewide_tests[0]
+  def test_can_load_data_from_all_files
+    assert @sr.statewide_tests[0].class_data.has_key?(:third_grade)
+    assert @sr.statewide_tests[0].class_data.has_key?(:eighth_grade)
+    assert @sr.statewide_tests[0].class_data.has_key?(:math)
+    assert @sr.statewide_tests[0].class_data.has_key?(:reading)
+    assert @sr.statewide_tests[0].class_data.has_key?(:writing)
   end
 
   def test_can_load_single_data
@@ -57,7 +60,7 @@ class StatewideRepositoryTest < Minitest::Test
 
   def test_enrollment_creates_array_of_statewide_tests
     refute @sr.statewide_tests.nil?
-    assert_equal 181, @sr.statewide_tests.length
+    assert_equal 7, @sr.statewide_tests.length
   end
 
   def test_data_can_be_found_by_name
