@@ -11,7 +11,11 @@ module Helper
   end
 
   def sanitize_data(input)
-    input.to_s.gsub!(/[\s]+/,'').to_f
+    input = "N/A" if input.nil?
+    return "N/A" if input.to_s[0] == "N"
+
+    input.to_s.gsub!(/[\s]+/,'')
+    input = input.to_f if String === input
     truncate(input)
   end
 

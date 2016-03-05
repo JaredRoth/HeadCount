@@ -4,8 +4,8 @@ require_relative '../lib/district_repository'
 
 class StatewideTestTest < Minitest::Test
   def setup
-    str = StatewideTestRepository.new
-    str.load_data({
+    @str = StatewideTestRepository.new
+    @str.load_data({
                     :statewide_testing => {
                       :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
                       :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
@@ -15,7 +15,7 @@ class StatewideTestTest < Minitest::Test
                     }
                   })
 
-    @st = str.find_by_name("ACADEMY 20")
+    @st = @str.find_by_name("ACADEMY 20")
   end
 
   def test_truncates_to_3_digits
@@ -116,5 +116,17 @@ class StatewideTestTest < Minitest::Test
 
   def test_subject_by_race_in_year_returns_correct_data_in_correct_format
     assert_equal 0.818, @st.proficient_for_subject_by_race_in_year(:math, :asian, 2012)
+  end
+
+  def test_proficiency_by_subject_and_year
+
+    testing = @str.find_by_name("ACADEMY 20")
+    assert_in_delta 0.653, testing.proficient_for_subject_by_grade_in_year(:math, 8, 2011), 0.005
+
+    testing = @str.find_by_name("WRAY SCHOOL DISTRICT RD-2")
+    assert_in_delta 0.89, testing.proficient_for_subject_by_grade_in_year(:reading, 3, 2014), 0.005
+
+    testing = @str.find_by_name("PLATEAU VALLEY 50")
+    assert_equal "N/A", testing.proficient_for_subject_by_grade_in_year(:reading, 8, 2011)
   end
 end
