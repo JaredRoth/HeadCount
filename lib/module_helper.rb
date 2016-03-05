@@ -3,7 +3,9 @@ require_relative "unknown_data_errors"
 module Helper
 
   def sanitize_data(input)
-    value = input.to_s.gsub(/[\s]+/,'').to_f
+    input.to_s.gsub!(/[\s]+/,'')
+    input = input.to_f if String === input
+    value = input.nan? ? 0 : input
     truncate(value)
   end
 
