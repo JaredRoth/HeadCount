@@ -19,7 +19,7 @@ class StatewideTestTest < Minitest::Test
     })
     sr = dr.statewide_repo
     @st = sr.find_by_name("ACADEMY 20")
-    binding.pry
+    # binding.pry
   end
 
   def test_truncates_to_3_digits

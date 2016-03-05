@@ -54,7 +54,7 @@ class HeadcountAnalystTest < Minitest::Test
     assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'WELD COUNTY S/D RE-8')
   end
 
-  def test_Kindergarten_participation_predict_high_school_graduation_returns_true_if_above_70_percent_the_state
+  def test_Kindergarten_participation_predict_high_school_graduation_returns_true_if_above_70_percent_the_district
 
     refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'SIERRA GRANDE R-30')
     assert @ha.kindergarten_participation_correlates_with_high_school_graduation(for: 'PARK (ESTES PARK) R-3')
@@ -66,7 +66,7 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_kindergarten_participation_accross_several_districts
-
+    
     districts = ["ACADEMY 20", 'PARK (ESTES PARK) R-3', 'YUMA SCHOOL DISTRICT 1']
     assert @ha.kindergarten_participation_correlates_with_high_school_graduation(:across => districts)
   end
