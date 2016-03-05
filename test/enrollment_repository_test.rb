@@ -6,24 +6,17 @@ require_relative '../lib/district_repository'
 class EnrollmentRepositoryTest < Minitest::Test
 
   def setup
-    # dr = DistrictRepository.new
-    # dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
-    # @er = dr.enrollment_repo
-    @er = EnrollmentRepository.new
-    @er.load_data({
-      :enrollment => {
-        :kindergarten => "./data/Kindergartners in full-day program.csv",
-        :high_school_graduation     => "./test_data/sample_high_school_graduation.csv"
+    dr = DistrictRepository.new
+    dr.load_data({:enrollment => {
+      :kindergarten => "./data/Kindergartners in full-day program.csv",
+      :high_school_graduation => "./test_data/sample_high_school_graduation.csv"
       }
     })
+    @er = dr.enrollment_repo
   end
 
   def test_can_load_all_data
     assert_equal 181, @er.enrollments.length
-  end
-
-  def test_can_find_specific_district_value
-
   end
 
   def test_can_load_from_multiple_sources
@@ -39,19 +32,8 @@ class EnrollmentRepositoryTest < Minitest::Test
 
   def test_find_by_name_returns_enrollment_object
     result = @er.find_by_name("ADAMS-ARAPAHOE 28J")
-    e = {2007=>0.473,
-         2006=>0.37,
-         2005=>0.201,
-         2004=>0.174,
-         2008=>0.479,
-         2009=>0.73,
-         2010=>0.922,
-         2011=>0.95,
-         2012=>0.973,
-         2013=>0.976,
-         2014=>0.971}
 
-    assert_equal e, result.kindergarten_participation_by_year
+    assert_equal Enrollment, result.class
   end
 
   def test_does_not_load_duplicate_data
@@ -93,4 +75,13 @@ class EnrollmentRepositoryTest < Minitest::Test
       assert_equal 0.436, enrollment.kindergarten_participation_in_year(2010)
   end
 
+  def test_find_by_name_is_case_insensitive
+    enrollment = @er.find_by_name("AcAdEmY 20")
+
+    assert_equal "ACADEMY 20", enrollment.name
+  end
+
+  def test_will_return_nil_if_invalid_name
+    assert_nil @er.find_by_name("Jimmmy")
+  end
 end

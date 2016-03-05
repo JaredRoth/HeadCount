@@ -1,6 +1,4 @@
-require 'pry'
 require_relative 'module_helper'
-
 
 class Enrollment
   include Helper
@@ -10,13 +8,7 @@ class Enrollment
   def initialize(args)
     @name = args[:name].upcase
     @grade_data = {}
-    retrieve_data(args)
-  end
-
-  def truncate_percentages(hash)
-    hash.map do |year,value|
-      [year.to_i, truncate(value.to_f)]
-    end.to_h
+    organize_data(args)
   end
 
   def kindergarten_participation_by_year
@@ -35,7 +27,7 @@ class Enrollment
     @grade_data[:high_school_graduation].fetch(year, nil)
   end
 
-  def retrieve_data(args)
+  def organize_data(args)
     args.each_pair do |key,value|
       next if key == :name
       if key == :kindergarten_participation

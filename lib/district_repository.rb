@@ -1,15 +1,16 @@
 require_relative 'district'
 require_relative 'enrollment_repository'
+require_relative 'statewide_test_repository'
 require 'csv'
 
 class DistrictRepository
 
-  attr_reader :districts, :enrollment_repo
+  attr_reader :districts, :enrollment_repo, :statewide_repo
 
   def initialize
     @districts = []
     @enrollment_repo = EnrollmentRepository.new
-    # @statewide_repo  = StatewideRepository.new
+    @statewide_repo  = StatewideRepository.new
     # @economic_repo   = EconomicRepository.new
   end
 
@@ -22,26 +23,17 @@ class DistrictRepository
   end
 
   def build_correct_repo(key, sources)
-    repos = {enrollment: build_enrollment_repo(sources),
-    # statewide_testing:   build_statewide_repo(sources),
-    # economic_profile:    build_economic_repo(sources)
-  }
-    repos[key]
+    repos = {enrollment: @enrollment_repo,
+      statewide_testing: @statewide_repo,
+      #  economic_profile: @economic_repo
+    }
+
+    build_repo(sources, repos[key])
   end
 
-  def build_enrollment_repo(sources)
-    @enrollment_repo.load_data(sources)
-    insert_info_into_districts(@enrollment_repo)
-  end
-
-  def build_statewide_repo(sources)
-    @statewide_repo.load_data(sources)
-    insert_info_into_districts(@statewide_repo)
-  end
-
-  def build_economic_repo(sources)
-    @economic_repo.load_data(sources)
-    insert_info_into_districts(@economic_repo)
+  def build_repo(sources, repo)
+    repo.load_data(sources)
+    insert_info_into_districts(repo)
   end
 
   def insert_info_into_districts(repo)
@@ -60,11 +52,11 @@ class DistrictRepository
   end
 
   def find_by_name(location)
-    # binding.pry if Hash === location
     districts.find { |district| district.name == location.upcase }
   end
 
   def find_all_matching(location)
     districts.find_all { |district| district.name.include?(location.upcase)}
   end
+
 end
