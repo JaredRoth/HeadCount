@@ -3,7 +3,7 @@ require_relative 'module_helper'
 require 'csv'
 
 
-class StatewideRepository
+class StatewideTestRepository
   include Helper
 
   attr_reader :statewide_tests
@@ -12,8 +12,8 @@ class StatewideRepository
     @statewide_tests = []
   end
 
-  def load_data(sources)
-    sources.each do |source, filename|
+  def load_data(source)
+    source[:statewide_testing].each do |source, filename|
       csv_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
       source_hash = {}
       all_districts_info(csv_hash).each do |name, data|

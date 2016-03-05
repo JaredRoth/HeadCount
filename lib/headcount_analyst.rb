@@ -64,9 +64,8 @@ class HeadcountAnalyst
          statewide_correlated?(kindergarten_high_school_correlation_statewide(district_name))
        else
         correlated?(kindergarten_high_school_correlation(district_name))
-        # binding.pry
       end
-    else  #process :across
+    else
       districts = params[:across]
 
     end
@@ -78,27 +77,17 @@ class HeadcountAnalyst
 
   def kindergarten_high_school_correlation_statewide(district_name)
     all_states = @dr.districts.map { |district| district.name}
-    # binding.pry
     num_passing_schools = all_states.count { |district_name| correlated?(kindergarten_high_school_correlation(district_name))}
     state_verification = num_passing_schools.to_f/all_states.length.to_f
   end
 
   def kindergarten_high_school_correlation(district_name)
-    begin
-    #binding.pry if ["EAST YUMA COUNTY RJ-2", "WEST YUMA COUNTY RJ-1"].include?(disctrict_name.upcase)
-    # binding.pry if "EAST YUMA COUNTY RJ-2" == district_name.upcase
     kinder = kindergarten_participation_average(district_name)
     high_school = high_school_participation_average(district_name)
     verification = sanitize_data(kinder / high_school)
-    # binding.pry
-  rescue Exception => e
-    puts e.message
-    print e.backtrace.join("\n")
-    end
   end
 
   def correlated?(num)
-    # binding.pry if num.nil?
     num >= 0.6  && num <= 1.5
   end
 
@@ -107,7 +96,6 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_average(district_name)
-    # binding.pry if Hash === district_name
     district = @dr.find_by_name(district_name)
     kinder_average = district.enrollment.kindergarten_participation_by_year
     k = compute_average_from_participation_hash(kinder_average)

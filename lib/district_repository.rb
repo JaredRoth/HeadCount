@@ -10,29 +10,26 @@ class DistrictRepository
   def initialize
     @districts = []
     @enrollment_repo = EnrollmentRepository.new
-    @statewide_repo  = StatewideRepository.new
+    @statewide_repo  = StatewideTestRepository.new
     # @economic_repo   = EconomicRepository.new
   end
 
-  def load_data(files)
-    create_district_repo(files)
+  def load_data(repo_types)
+    create_district_repo(repo_types)
 
-    files.each do |repo_type, sources|
-      build_correct_repo(repo_type, sources)
+    repo_types.each do |repo_type, files|
+      build_correct_repo(repo_type, files)
     end
   end
 
-  def build_correct_repo(key, sources)
+  def build_correct_repo(repo_type, files)
     repos = {enrollment: @enrollment_repo,
       statewide_testing: @statewide_repo,
       #  economic_profile: @economic_repo
     }
 
-    build_repo(sources, repos[key])
-  end
-
-  def build_repo(sources, repo)
-    repo.load_data(sources)
+    repo = repos[repo_type]
+    repo.load_data({repo_type => files})
     insert_info_into_districts(repo)
   end
 

@@ -3,7 +3,7 @@ require_relative '../lib/statewide_test_repository'
 require_relative '../lib/district_repository'
 
 
-class StatewideRepositoryTest < Minitest::Test
+class StatewideTestRepositoryTest < Minitest::Test
 
   def setup
     dr = DistrictRepository.new
