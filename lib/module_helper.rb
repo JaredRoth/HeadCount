@@ -19,7 +19,7 @@ module Helper
     truncate(input)
   end
 
-  def to_na(num)
+  def sanitize_data_to_na(num)
     sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase == "N/A" ? "N/A" : sanitize_data(num)
   end
 
