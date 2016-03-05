@@ -11,12 +11,16 @@ module Helper
   end
 
   def sanitize_data(input)
-    input = "N/A" if input.nil?
-    return "N/A" if input.to_s[0] == "N"
+    # input = "N/A" if input.nil?
+    # return "N/A" if input.to_s[0] == "N"
 
     input.to_s.gsub!(/[\s]+/,'')
     input = input.to_f if String === input
     truncate(input)
+  end
+
+  def to_na(num)
+    sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase == "N/A" ? "N/A" : sanitize_data(num)
   end
 
   def truncate_percentages(hash)

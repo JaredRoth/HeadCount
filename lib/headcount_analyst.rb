@@ -12,7 +12,8 @@ class HeadcountAnalyst
 
 
   def compute_average_from_participation_hash(participation_hash)
-    participation_total = participation_hash.values.reduce(:+)
+    participation_total = participation_hash.values.map{|val| String === val ? 0 : val}.reduce(:+)
+    # binding.pry if participation_hash.values.include?("N/A")
     total_years = participation_hash.length
     participation_total / total_years
   end
@@ -88,6 +89,8 @@ class HeadcountAnalyst
   end
 
   def correlated?(num)
+    binding.pry if String === num
+
     num >= 0.6  && num <= 1.5
   end
 
