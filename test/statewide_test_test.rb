@@ -1,42 +1,25 @@
 require_relative 'test_helper'
 require_relative '../lib/statewide_test'
+require_relative '../lib/district_repository'
 
 class StatewideTestTest < Minitest::Test
   def setup
-    @st = StatewideTest.new({:name => "ACADEMY 20",
-      :third_grade => {"Math"=>{"2008"=>0.857, "2009"=>0.824, "2010"=>0.849, "2011"=>0.819, "2012"=>0.83, "2013"=>0.8554, "2014"=>0.8345},
-                    "Reading"=>{"2008"=>0.866, "2009"=>0.862, "2010"=>0.864, "2011"=>0.867, "2012"=>0.87, "2013"=>0.85923, "2014"=>0.83101},
-                    "Writing"=>{"2008"=>0.671, "2009"=>0.706, "2010"=>0.662, "2011"=>0.678, "2012"=>0.65517, "2014"=>0.63942, "2013"=>0.6687}
-                    }})
-    @st.class_data[:eighth_grade] =    {"Math"=>{"2008"=>0.64, "2009"=>0.656, "2010"=>0.672, "2011"=>0.65339, "2012"=>0.68197, "2013"=>0.6613, "2014"=>0.68496},
-                                     "Reading"=>{"2008"=>0.843, "2009"=>0.825, "2010"=>0.863, "2011"=>0.83221, "2012"=>0.83352, "2013"=>0.85286, "2014"=>0.827},
-                                     "Writing"=>{"2008"=>0.734, "2009"=>0.701, "2010"=>0.754, "2011"=>0.74579, "2012"=>0.73839, "2013"=>0.75069, "2014"=>0.74789}}
-
-    @st.class_data[:math] =    {"All Students"=>{"2011"=>0.68, "2012"=>0.6894, "2013"=>0.69683, "2014"=>0.69944},
-                                       "Asian"=>{"2011"=>0.8169, "2012"=>0.8182, "2013"=>0.8053, "2014"=>0.8},
-                                       "Black"=>{"2011"=>0.4246, "2012"=>0.4248, "2013"=>0.4404, "2014"=>0.4205},
-                   "Hawaiian/Pacific Islander"=>{"2011"=>0.5686, "2012"=>0.5714, "2013"=>0.6833, "2014"=>0.6818},
-                                    "Hispanic"=>{"2011"=>0.5681, "2012"=>0.5722, "2013"=>0.5883, "2014"=>0.6048},
-                             "Native American"=>{"2011"=>0.6143, "2012"=>0.5714, "2013"=>0.5932, "2014"=>0.5439},
-                                 "Two or more"=>{"2011"=>0.6772, "2012"=>0.6899, "2013"=>0.6967, "2014"=>0.6932},
-                                       "White"=>{"2011"=>0.7065, "2012"=>0.7135, "2013"=>0.7208, "2014"=>0.723}}
-
-    @st.class_data[:reading] = {"All Students"=>{"2011"=>0.83, "2012"=>0.84585, "2013"=>0.84505, "2014"=>0.84127},
-                                       "Asian"=>{"2011"=>0.8976, "2012"=>0.89328, "2013"=>0.90193, "2014"=>0.85531},
-                                       "Black"=>{"2011"=>0.662, "2012"=>0.69469, "2013"=>0.66951, "2014"=>0.70387},
-                   "Hawaiian/Pacific Islander"=>{"2011"=>0.7451, "2012"=>0.83333, "2013"=>0.86667, "2014"=>0.93182},
-                                    "Hispanic"=>{"2011"=>0.7486, "2012"=>0.77167, "2013"=>0.77278, "2014"=>0.00778},
-                             "Native American"=>{"2011"=>0.8169, "2012"=>0.78571, "2013"=>0.81356, "2014"=>0.00724},                                   "Two or more"=>{"2011"=>0.8419, "2012"=>0.84584, "2013"=>0.85582, "2014"=>0.00859},
-                                       "White"=>{"2011"=>0.8513, "2012"=>0.86189, "2013"=>0.86083, "2014"=>0.00856}}
-
-    @st.class_data[:writing] = {"All Students"=>{"2011"=>0.7192, "2012"=>0.70593, "2013"=>0.72029, "2014"=>0.71583},
-                                       "Asian"=>{"2011"=>0.8268, "2012"=>0.8083, "2013"=>0.8109, "2014"=>0.7894},
-                                       "Black"=>{"2011"=>0.5152, "2012"=>0.5044, "2013"=>0.4819, "2014"=>0.5194},
-                   "Hawaiian/Pacific Islander"=>{"2011"=>0.7255, "2012"=>0.6833, "2013"=>0.7167, "2014"=>0.7273},
-                                    "Hispanic"=>{"2011"=>0.6068, "2012"=>0.5978, "2013"=>0.623, "2014"=>0.6244},
-                             "Native American"=>{"2011"=>0.6, "2012"=>0.5893, "2013"=>0.6102, "2014"=>0.6207},
-                                 "Two or more"=>{"2011"=>0.7274, "2012"=>0.7186, "2013"=>0.7474, "2014"=>0.7317},
-                                       "White"=>{"2011"=>0.7401, "2012"=>0.7262, "2013"=>0.7406, "2014"=>0.7348}}
+    dr = DistrictRepository.new
+    dr.load_data({
+      :enrollment => {
+        :kindergarten => "./test_data/sample_kindergartners_file.csv"
+      },
+      :statewide_testing => {
+        :third_grade => "./test_data/sample_3rd_grade.csv",
+        :eighth_grade => "./test_data/sample_8th_grade.csv",
+        :math => "./test_data/sample_math_proficiency.csv",
+        :reading => "./test_data/sample_reading_proficiency.csv",
+        :writing => "./test_data/sample_writing_proficiency.csv"
+      }
+    })
+    sr = dr.statewide_repo
+    @st = sr.find_by_name("ACADEMY 20")
+    binding.pry
   end
 
   def test_truncates_to_3_digits
@@ -54,5 +37,88 @@ class StatewideTestTest < Minitest::Test
 
   def test_enrollment_provides_name_for_district
     assert_equal "ACADEMY 20", @st.name
+  end
+
+  def test_proficient_by_grade_returns_UnknownDataError
+    assert_raises UnknownDataError do
+      @st.proficient_by_grade(9)
+    end
+  end
+
+  def test_proficient_by_grade_returns_correct_data_in_correct_format
+    third = {2008 => {math: 0.857, reading: 0.866, writing: 0.671},
+             2009 => {math: 0.824, reading: 0.862, writing: 0.706},
+             2010 => {math: 0.849, reading: 0.864, writing: 0.662},
+             2011 => {math: 0.819, reading: 0.867, writing: 0.678},
+             2012 => {math: 0.83,  reading: 0.87,  writing: 0.655},
+             2013 => {math: 0.855, reading: 0.859, writing: 0.668},
+             2014 => {math: 0.834, reading: 0.831, writing: 0.639}}
+
+    eighth = {2008 => {math: 0.64,  reading: 0.843, writing: 0.734},
+              2009 => {math: 0.656, reading: 0.825, writing: 0.701},
+              2010 => {math: 0.672, reading: 0.863, writing: 0.754},
+              2011 => {math: 0.653, reading: 0.832, writing: 0.745},
+              2012 => {math: 0.681, reading: 0.833, writing: 0.738},
+              2013 => {math: 0.661, reading: 0.852, writing: 0.750},
+              2014 => {math: 0.684, reading: 0.827, writing: 0.747}}
+
+    assert_equal third, @st.proficient_by_grade(3)
+    assert_equal eighth, @st.proficient_by_grade(8)
+  end
+
+  def test_proficient_by_race_or_ethnicity_returns_UnknownRaceError
+    assert_raises UnknownDataError do
+      @st.proficient_by_race_or_ethnicity(:pizza)
+    end
+    assert_raises UnknownDataError do
+      @st.proficient_by_race_or_ethnicity(:all_students)
+    end
+  end
+
+  def test_proficient_by_race_or_ethnicity_returns_correct_data_in_correct_format
+    asian = {2011=>{:math=>0.816, :reading=>0.897, :writing=>0.826},
+             2012=>{:math=>0.818, :reading=>0.893, :writing=>0.808},
+             2013=>{:math=>0.805, :reading=>0.901, :writing=>0.81},
+             2014=>{:math=>0.8,   :reading=>0.855, :writing=>0.789}}
+
+    black = {2011=>{:math=>0.424, :reading=>0.662, :writing=>0.515},
+             2012=>{:math=>0.424, :reading=>0.694, :writing=>0.504},
+             2013=>{:math=>0.44,  :reading=>0.669, :writing=>0.481},
+             2014=>{:math=>0.42,  :reading=>0.703, :writing=>0.519}}
+
+    assert_equal asian, @st.proficient_by_race_or_ethnicity(:asian)
+    assert_equal black, @st.proficient_by_race_or_ethnicity(:black)
+  end
+
+  def test_subject_by_grade_in_year_returns_UnknownDataError
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_grade_in_year(:pizza, 3, 2010)
+    end
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_grade_in_year(:math, 4, 2010)
+    end
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_grade_in_year(:math, 3, 2030)
+    end
+  end
+
+  def test_subject_by_grade_in_year_returns_correct_data_in_correct_format
+    assert_equal 0.857, @st.proficient_for_subject_by_grade_in_year(:math, 3, 2008)
+  end
+
+  def test_subject_by_race_in_year_returns_UnknownDataError
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_race_in_year(:pizza, :asian, 2012)
+    end
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_race_in_year(:math, :pizza, 2012)
+    end
+    assert_raises UnknownDataError do
+      @st.proficient_for_subject_by_race_in_year(:math, :asian, 2030)
+    end
+  end
+
+  def test_subject_by_race_in_year_returns_correct_data_in_correct_format
+    assert_equal 0.818, @st.proficient_for_subject_by_race_in_year(:math, :asian, 2012)
   end
 end

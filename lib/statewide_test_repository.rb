@@ -51,9 +51,9 @@ class StatewideRepository
       data_grouped_by_subject.each do |subject, data|
         one_class_info = {}
         data.each do |line|
-          one_class_info[line[:timeframe]] = sanitize_data(line[:data])
+          one_class_info[line[:timeframe].to_i] = sanitize_data(line[:data])
         end
-        one_districts_info[subject] = one_class_info
+        one_districts_info[subject.downcase.gsub(/\W/,'_').to_sym] = one_class_info
       end
       hash_result[name] = one_districts_info
     end

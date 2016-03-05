@@ -8,8 +8,8 @@ class EnrollmentRepositoryTest < Minitest::Test
   def setup
     dr = DistrictRepository.new
     dr.load_data({:enrollment => {
-        :kindergarten => "./data/Kindergartners in full-day program.csv",
-        :high_school_graduation     => "./test_data/sample_high_school_graduation.csv"
+      :kindergarten => "./data/Kindergartners in full-day program.csv",
+      :high_school_graduation => "./test_data/sample_high_school_graduation.csv"
       }
     })
     @er = dr.enrollment_repo

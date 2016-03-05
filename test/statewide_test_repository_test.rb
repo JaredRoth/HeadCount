@@ -9,7 +9,7 @@ class StatewideRepositoryTest < Minitest::Test
     dr = DistrictRepository.new
     dr.load_data({
       :enrollment => {
-        :kindergarten => "./data/Kindergartners in full-day program.csv"
+        :kindergarten => "./test_data/sample_kindergartners_file.csv"
       },
       :statewide_testing => {
         :third_grade => "./test_data/sample_3rd_grade.csv",
@@ -55,7 +55,7 @@ class StatewideRepositoryTest < Minitest::Test
   def test_value_for_specific_year_is_correct
     statewide_test = @sr.find_by_name("ACADEMY 20")
 
-    assert_equal 0.843, statewide_test.class_data[:eighth_grade]["Reading"]["2008"]
+    assert_equal 0.843, statewide_test.class_data[:eighth_grade][:reading]["2008"]
   end
 
   def test_enrollment_creates_array_of_statewide_tests

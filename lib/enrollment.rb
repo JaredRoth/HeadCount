@@ -1,4 +1,7 @@
+require_relative 'module_helper'
+
 class Enrollment
+  include Helper
 
   attr_accessor :name, :grade_data
 
@@ -6,16 +9,6 @@ class Enrollment
     @name = args[:name].upcase
     @grade_data = {}
     organize_data(args)
-  end
-
-  def truncate_percentages(hash)
-    hash.map do |year,value|
-      [year.to_i, truncate(value.to_f)]
-    end.to_h
-  end
-
-  def truncate(value)
-    ((value * 1000).floor / 1000.0)
   end
 
   def kindergarten_participation_by_year
