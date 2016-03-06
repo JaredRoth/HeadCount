@@ -1,6 +1,6 @@
 require_relative 'test_helper'
 require_relative '../lib/economic_profile'
-require_relative '../lib/district_repository'
+require_relative '../lib/economic_profile_repository'
 
 class EconomicProfileTest < Minitest::Test
   def setup
@@ -14,29 +14,26 @@ class EconomicProfileTest < Minitest::Test
   end
 
   def test_can_create_object_from_imported_data
-    skip
     epr = EconomicProfileRepository.new
     epr.load_data({
-                    :statewide_testing => {
-                      :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-                      :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-                      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-                    }
+                  :economic_profile => {
+                    :median_household_income     => "./data/Median household income.csv",
+                    :children_in_poverty         => "./data/School-aged children in poverty.csv",
+                    :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
+                    :title_i                     => "./data/Title I students.csv"}
                   })
 
-    assert_equal 181, epr.count
+    assert_equal 181, epr.economic_profiles.count
     assert epr.find_by_name("ACADEMY 20")
 
     result = epr.find_by_name("ACADEMY 20")
-
-    assert_equal 1, result.median_household_income_in_year(2015)
-    assert_equal 1, result.median_household_income_average
-    assert_equal 1, result.children_in_poverty_in_year(2012)
-    assert_equal 1, result.free_or_reduced_price_lunch_percentage_in_year(2014)
-    assert_equal 1, result.free_or_reduced_price_lunch_number_in_year(2014)
-    assert_equal 1, result.title_i_in_year(2015)
+    binding.pry
+    # assert_equal 1, result.median_household_income_in_year(2015)
+    # assert_equal 1, result.median_household_income_average
+    # assert_equal 1, result.children_in_poverty_in_year(2012)
+    # assert_equal 1, result.free_or_reduced_price_lunch_percentage_in_year(2014)
+    # assert_equal 1, result.free_or_reduced_price_lunch_number_in_year(2014)
+    # assert_equal 1, result.title_i_in_year(2015)
   end
 
   def test_economic_profile_provides_name_for_district

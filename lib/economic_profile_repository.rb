@@ -43,18 +43,21 @@ class EconomicProfileRepository
     end
   end
 
+  def year_or_range(year)
+    year.length > 4 ? year.split('-').map(&:to_i) : year.to_i
+  end
+
+  def total_or_percent(row)
+    row[:Data] if row[:DataFormat] == "Percent"
+  end
+
   def all_districts_info(data)
     data_grouped_by_location = group_data_by_location(data)
     hash_result = {}
-    data_grouped_by_location.each do |name,full_hash_of_data|
-      data_grouped_by_subject = group_data_by_subject(full_hash_of_data)
+    data_grouped_by_location.each do |name, value|
       one_districts_info = {}
-      data_grouped_by_subject.each do |subject, data|
-        one_class_info = {}
-        data.each do |line|
-          one_class_info[line[:timeframe].to_i] = sanitize_data_to_na(line[:data])
-        end
-        one_districts_info[subject.downcase.gsub(/\W/,'_').to_sym] = one_class_info
+      value.each do |line|
+        one_districts_info[year_or_range(line[:timeframe])] = sanitize_data(line[:data])
       end
       hash_result[name] = one_districts_info
     end
