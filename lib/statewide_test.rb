@@ -49,9 +49,9 @@ class StatewideTest
   end
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)
-    grade = check_grade(grade)
     subjects = [:math, :reading, :writing]
     error?(subjects.include?(subject))
+    grade = check_grade(grade)
     error?(@class_data[grade][subject].key?(year))
 
     @class_data[grade][subject][year]
