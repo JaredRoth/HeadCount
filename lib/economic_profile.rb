@@ -7,7 +7,7 @@ class EconomicProfile
   attr_accessor :name, :economic_data
 
   def initialize(args)
-    @name = args[:name].upcase
+    @name = args[:name]
     @economic_data = {}
     organize_data(args)
   end
@@ -42,24 +42,28 @@ class EconomicProfile
   end
 
   def median_household_income_average
-    # add all range averages
-    # divide by number of ranges
+    total = @economic_data[:median_household_income].values.reduce(:+)
+    count = @economic_data[:median_household_income].length
+    total / count
   end
 
   def children_in_poverty_in_year(year)
-
+    error?(@economic_data[:children_in_poverty].has_key?(year))
+    sanitize_data(@economic_data[:children_in_poverty][year])
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-
+    error?(@economic_data[:free_or_reduced_price_lunch].has_key?(year))
+    sanitize_data(@economic_data[:free_or_reduced_price_lunch][year][:percentage])
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
-
+    error?(@economic_data[:free_or_reduced_price_lunch].has_key?(year))
+    sanitize_data(@economic_data[:free_or_reduced_price_lunch][year][:total])
   end
 
   def title_i_in_year(year)
-
+    error?(@economic_data[:title_i].has_key?(year))
+    sanitize_data(@economic_data[:title_i][year])
   end
-
 end

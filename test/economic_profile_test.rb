@@ -43,43 +43,25 @@ class EconomicProfileTest < Minitest::Test
     assert_equal "ACADEMY 20", @ep.name
   end
 
-  def test_median_household_income_in_year_returns_UnknownDataError
-
-    assert_raises UnknownDataError do
-      @ep.median_household_income_in_year(2030)
-    end
-  end
-
-  def test_median_household_income_average_returns_UnknownDataError
-    skip
-    assert_raises UnknownDataError do
-      @ep.median_household_income_average(2030)
-    end
-  end
-
   def test_children_in_poverty_in_year_returns_UnknownRaceError
-    skip
     assert_raises UnknownDataError do
       @ep.children_in_poverty_in_year(2030)
     end
   end
 
   def test_lunch_percentage_returns_UnknownDataError
-    skip
     assert_raises UnknownDataError do
       @ep.free_or_reduced_price_lunch_percentage_in_year(2030)
     end
   end
 
   def test_lunch_number_returns_UnknownDataError
-    skip
     assert_raises UnknownDataError do
       @ep.free_or_reduced_price_lunch_number_in_year(2030)
     end
   end
 
   def test_title_i_in_year_returns_UnknownDataError
-    skip
     assert_raises UnknownDataError do
       @ep.title_i_in_year(2030)
     end
@@ -90,22 +72,18 @@ class EconomicProfileTest < Minitest::Test
   end
 
   def test_median_household_income_average_calculates_properly
-    skip
     assert_equal 55000, @ep.median_household_income_average
   end
 
   def test_children_in_poverty_in_year_calculates_properly
-    skip
     assert_equal 0.184, @ep.children_in_poverty_in_year(2012)
   end
 
   def test_lunch_percentage_calculates_properly
-    skip
     assert_equal 0.023, @ep.free_or_reduced_price_lunch_percentage_in_year(2014)
   end
 
   def test_lunch_number_calculates_properly
-    skip
     assert_equal 100, @ep.free_or_reduced_price_lunch_number_in_year(2014)
   end
 
@@ -122,7 +100,6 @@ class EconomicProfileTest < Minitest::Test
   end
 
   def test_title_i_in_year_calculates_properly
-    skip
     assert_equal 0.543, @ep.title_i_in_year(2015)
   end
 end

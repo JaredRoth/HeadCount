@@ -7,7 +7,6 @@ class EnrollmentTest < Minitest::Test
       :kindergarten => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677},
       :high_school_graduation     => {2010 => 0.895, 2011 => 0.895, 2012 => 0.889, 2013 => 0.913, 2014 => 0.898,}
       })
-      binding.pry
   end
 
   def test_enrollment_provides_kindergarten_participiation_for_district
