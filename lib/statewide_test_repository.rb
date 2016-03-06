@@ -15,7 +15,6 @@ class StatewideTestRepository
   def load_data(source)
     source[:statewide_testing].each do |source, filename|
       csv_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-      source_hash = {}
       all_districts_info(csv_hash).each do |name, data|
         if find_by_name(name)
           find_by_name(name).class_data[source] = data

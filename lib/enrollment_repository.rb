@@ -17,7 +17,6 @@ class EnrollmentRepository
 
     sources.each do |source, filename|
       csv_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-      source_hash = {}
       all_districts_info(csv_hash).each do |name, data|
         if find_by_name(name)
           find_by_name(name).grade_data[source] = data

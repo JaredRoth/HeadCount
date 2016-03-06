@@ -1,6 +1,7 @@
 require_relative 'district'
 require_relative 'enrollment_repository'
 require_relative 'statewide_test_repository'
+require_relative 'economic_profile_repository'
 require 'csv'
 
 class DistrictRepository
@@ -11,7 +12,7 @@ class DistrictRepository
     @districts = []
     @enrollment_repo = EnrollmentRepository.new
     @statewide_repo  = StatewideTestRepository.new
-    # @economic_repo   = EconomicRepository.new
+    @economic_repo   = EconomicProfileRepository.new
   end
 
   def load_data(repo_types)
@@ -23,19 +24,24 @@ class DistrictRepository
   end
 
   def build_correct_repo(repo_type, files)
-    repos = {enrollment: @enrollment_repo,
-      statewide_testing: @statewide_repo,
-      #  economic_profile: @economic_repo
-    }
+    reposotpries = {enrollment: @enrollment_repo,
+             statewide_testing: @statewide_repo,
+              economic_profile: @economic_repo}
 
-    repo = repos[repo_type]
+    instances    = {enrollment: district.enrollment,
+             statewide_testing: district.statewide_test,
+              economic_profile: district.economic_profile}
+
+    repo = repositories[repo_type]
+    instance = instances[repo_type]
+
     repo.load_data({repo_type => files})
-    insert_info_into_districts(repo)
+    insert_info_into_districts(repo, instance)
   end
 
-  def insert_info_into_districts(repo)
+  def insert_info_into_districts(repo, instance)
     districts.each do |district|
-      district.enrollment = repo.find_by_name(district.name)
+      instance = repo.find_by_name(district.name)
     end
   end
 

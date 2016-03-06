@@ -14,6 +14,7 @@ class EconomicProfileTest < Minitest::Test
   end
 
   def test_can_create_object_from_imported_data
+    skip
     epr = EconomicProfileRepository.new
     epr.load_data({
                   :economic_profile => {
@@ -27,7 +28,6 @@ class EconomicProfileTest < Minitest::Test
     assert epr.find_by_name("ACADEMY 20")
 
     result = epr.find_by_name("ACADEMY 20")
-    binding.pry
     # assert_equal 1, result.median_household_income_in_year(2015)
     # assert_equal 1, result.median_household_income_average
     # assert_equal 1, result.children_in_poverty_in_year(2012)

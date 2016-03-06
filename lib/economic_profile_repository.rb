@@ -14,15 +14,87 @@ class EconomicProfileRepository
   end
 
   def load_data(source)
-    source[:economic_profile].each do |source, filename|
-      csv_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-      source_hash = {}
-      all_districts_info(csv_hash).each do |name, data|
-        if find_by_name(name)
-          find_by_name(name).economic_data[source] = data
+    data_collected_by_type = source[:economic_profile].map do |data_type, filename|
+      csv_as_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
+      one_files_data = Hash.new
+      one_files_data[data_type] = {}
+      all_districts_info(csv_as_hash, data_type).each do |name, one_districts_data|
+        one_files_data[data_type][name] = one_districts_data
+      end
+      [data_type, one_files_data[data_type]]
+    end.to_h
+
+    all_data_hash = {}
+    data_collected_by_type.each do |data_metric, districts|
+      districts.each do |name, data|
+        if all_data_hash[name].nil?
+          all_data_hash[name] = Hash[data_metric, data, :name, name]
         else
-          economic_profiles << EconomicProfile.new(name: name, source => data)
+          all_data_hash[name][data_metric] = data
         end
+      end
+    end
+
+    all_data_hash.each_value do |value|
+      economic_profiles << EconomicProfile.new(value)
+    end
+  end
+
+  def find_by_name(location)
+    economic_profiles.find { |econ_profile| econ_profile.name.upcase == location.upcase}
+  end
+
+  private
+
+  def all_districts_info(data, data_type)
+    data = group_data_by_location(data)
+
+    # put inside of loop
+    decide_data_type(data, data_type)
+  end
+
+  def decide_data_type(data, data_type)
+    case data_type
+    when :median_household_income
+      collect_income_data(data)
+    when :children_in_poverty
+      collect_poverty_data(data)
+    when :free_or_reduced_price_lunch
+      collect_lunch_data(data)
+    when :title_i
+      collect_title_I_data(data)
+    end
+  end
+
+  def collect_income_data(data)
+    data.each_with_object({}) do |(name, value), one_districts_info|
+      one_districts_info[name] = value.each_with_object({}) do |row, year_data|
+        year_data[row[:timeframe].split('-').map(&:to_i)] = row[:data]
+      end
+    end
+  end
+
+  def collect_poverty_data(data)
+    data.each_with_object({}) do |(name, value), one_districts_info|
+      one_districts_info[name] = value.each_with_object({}) do |row, year_data|
+        year_data[row[:timeframe].to_i] = row[:data] if row[:dataformat].upcase == "PERCENT"
+      end
+    end
+  end
+
+  def collect_lunch_data(data)
+    data.each_with_object({}) do |(name, value), one_districts_info|
+      one_districts_info[name] = value.each_with_object({}) do |row, year_data|
+        binding.pry
+        year_data[row[:timeframe].to_i] = row[:data]
+      end
+    end
+  end
+
+  def collect_title_I_data(data)
+    data.each_with_object({}) do |(name, value), one_districts_info|
+      one_districts_info[name] = value.each_with_object({}) do |row, year_data|
+        year_data[row[:timeframe].to_i] = row[:data]
       end
     end
   end
@@ -30,41 +102,14 @@ class EconomicProfileRepository
   def group_data_by_location(data)
     data.group_by { |row| row[:location].upcase }
   end
-
-  def group_data_by_subject(data)
-    data.group_by { |row| row[class_or_race(row)] }
-  end
-
-  def class_or_race(row)
-    if row.has_key?(:score)
-      :score
-    elsif row.has_key?(:race_ethnicity)
-      :race_ethnicity
-    end
-  end
-
-  def year_or_range(year)
-    year.length > 4 ? year.split('-').map(&:to_i) : year.to_i
-  end
-
-  def total_or_percent(row)
-    row[:Data] if row[:DataFormat] == "Percent"
-  end
-
-  def all_districts_info(data)
-    data_grouped_by_location = group_data_by_location(data)
-    hash_result = {}
-    data_grouped_by_location.each do |name, value|
-      one_districts_info = {}
-      value.each do |line|
-        one_districts_info[year_or_range(line[:timeframe])] = sanitize_data(line[:data])
-      end
-      hash_result[name] = one_districts_info
-    end
-    hash_result
-  end
-
-  def find_by_name(location)
-    economic_profiles.find { |econ_profile| econ_profile.name.upcase == location.upcase}
-  end
 end
+
+
+epr = EconomicProfileRepository.new
+epr.load_data({
+              :economic_profile => {
+                :median_household_income     => "./test_data/sample_median.csv",
+                :children_in_poverty         => "./test_data/sample_poverty.csv",
+                :free_or_reduced_price_lunch => "./test_data/sample_lunch.csv",
+                :title_i                     => "./test_data/sample_title_i.csv"}
+              })
