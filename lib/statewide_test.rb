@@ -38,7 +38,13 @@ class StatewideTest
   end
 
   def proficient_by_race_or_ethnicity(race)
-    races = [:asian, :black, :pacific_islander, :hispanic, :native_american, :two_or_more, :white]
+    races = [:asian,
+             :black,
+             :pacific_islander,
+             :hispanic,
+             :native_american,
+             :two_or_more,
+             :white]
     error?(races.include?(race))
 
     @class_data[:math][race].map do |year, data|
@@ -49,9 +55,9 @@ class StatewideTest
   end
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)
-    grade = check_grade(grade)
     subjects = [:math, :reading, :writing]
     error?(subjects.include?(subject))
+    grade = check_grade(grade)
     error?(@class_data[grade][subject].key?(year))
 
     @class_data[grade][subject][year]
@@ -59,7 +65,13 @@ class StatewideTest
 
   def proficient_for_subject_by_race_in_year(subject, race, year)
     subjects = [:math, :reading, :writing]
-    races    = [:asian, :black, :pacific_islander, :hispanic, :native_american, :two_or_more, :white]
+    races    = [:asian,
+                :black,
+                :pacific_islander,
+                :hispanic,
+                :native_american,
+                :two_or_more,
+                :white]
     error?(subjects.include?(subject))
     error?(races.include?(race))
     error?(@class_data[subject][race].key?(year))

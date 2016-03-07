@@ -1,17 +1,18 @@
 require_relative 'district'
 require_relative 'enrollment_repository'
 require_relative 'statewide_test_repository'
+require_relative 'economic_profile_repository'
 require 'csv'
 
 class DistrictRepository
 
-  attr_reader :districts, :enrollment_repo, :statewide_repo
+  attr_reader :districts, :enrollment_repo, :statewide_repo, :economic_repo
 
   def initialize
     @districts = []
     @enrollment_repo = EnrollmentRepository.new
     @statewide_repo  = StatewideTestRepository.new
-    # @economic_repo   = EconomicRepository.new
+    @economic_repo   = EconomicProfileRepository.new
   end
 
   def load_data(repo_types)
@@ -20,22 +21,24 @@ class DistrictRepository
     repo_types.each do |repo_type, files|
       build_correct_repo(repo_type, files)
     end
+    insert_info_into_districts
   end
 
   def build_correct_repo(repo_type, files)
-    repos = {enrollment: @enrollment_repo,
-      statewide_testing: @statewide_repo,
-      #  economic_profile: @economic_repo
-    }
+    repositories = {enrollment: @enrollment_repo,
+             statewide_testing: @statewide_repo,
+              economic_profile: @economic_repo}
 
-    repo = repos[repo_type]
+    repo = repositories[repo_type]
+
     repo.load_data({repo_type => files})
-    insert_info_into_districts(repo)
   end
 
-  def insert_info_into_districts(repo)
+  def insert_info_into_districts
     districts.each do |district|
-      district.enrollment = repo.find_by_name(district.name)
+      district.enrollment = @enrollment_repo.find_by_name(district.name)
+      district.statewide_test = @statewide_repo.find_by_name(district.name)
+      district.economic_profile = @economic_repo.find_by_name(district.name)
     end
   end
 
