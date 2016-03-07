@@ -59,7 +59,7 @@ class EconomicProfile
 
   def free_or_reduced_price_lunch_number_in_year(year)
     error?(@economic_data[:free_or_reduced_price_lunch].has_key?(year))
-    sanitize_data(@economic_data[:free_or_reduced_price_lunch][year][:total])
+    @economic_data[:free_or_reduced_price_lunch][year][:total]
   end
 
   def title_i_in_year(year)

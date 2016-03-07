@@ -6,7 +6,7 @@ require 'csv'
 
 class DistrictRepository
 
-  attr_reader :districts, :enrollment_repo, :statewide_repo
+  attr_reader :districts, :enrollment_repo, :statewide_repo, :economic_repo
 
   def initialize
     @districts = []
@@ -21,27 +21,24 @@ class DistrictRepository
     repo_types.each do |repo_type, files|
       build_correct_repo(repo_type, files)
     end
+    insert_info_into_districts
   end
 
   def build_correct_repo(repo_type, files)
-    reposotpries = {enrollment: @enrollment_repo,
+    repositories = {enrollment: @enrollment_repo,
              statewide_testing: @statewide_repo,
               economic_profile: @economic_repo}
 
-    instances    = {enrollment: district.enrollment,
-             statewide_testing: district.statewide_test,
-              economic_profile: district.economic_profile}
-
     repo = repositories[repo_type]
-    instance = instances[repo_type]
 
     repo.load_data({repo_type => files})
-    insert_info_into_districts(repo, instance)
   end
 
-  def insert_info_into_districts(repo, instance)
+  def insert_info_into_districts
     districts.each do |district|
-      instance = repo.find_by_name(district.name)
+      district.enrollment = @enrollment_repo.find_by_name(district.name)
+      district.statewide_test = @statewide_repo.find_by_name(district.name)
+      district.economic_profile = @economic_repo.find_by_name(district.name)
     end
   end
 

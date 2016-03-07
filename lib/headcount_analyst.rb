@@ -13,7 +13,6 @@ class HeadcountAnalyst
 
   def compute_average_from_participation_hash(participation_hash)
     participation_total = participation_hash.values.map{|val| String === val ? 0 : val}.reduce(:+)
-    # binding.pry if participation_hash.values.include?("N/A")
     total_years = participation_hash.length
     participation_total / total_years
   end
@@ -95,7 +94,9 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_against_high_school_graduation(district_name)
-    truncate(kindergarten_participation_average(district_name) / high_school_participation_average(district_name))
+    numerator = kindergarten_participation_average(district_name)
+    denominator = high_school_participation_average(district_name)
+    truncate(numerator / denominator)
   end
 
   def kindergarten_participation_average(district_name)

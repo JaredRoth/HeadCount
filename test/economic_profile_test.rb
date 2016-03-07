@@ -14,7 +14,6 @@ class EconomicProfileTest < Minitest::Test
   end
 
   def test_can_create_object_from_imported_data
-    skip
     epr = EconomicProfileRepository.new
     epr.load_data({
                   :economic_profile => {
@@ -28,12 +27,12 @@ class EconomicProfileTest < Minitest::Test
     assert epr.find_by_name("ACADEMY 20")
 
     result = epr.find_by_name("ACADEMY 20")
-    # assert_equal 1, result.median_household_income_in_year(2015)
-    # assert_equal 1, result.median_household_income_average
-    # assert_equal 1, result.children_in_poverty_in_year(2012)
-    # assert_equal 1, result.free_or_reduced_price_lunch_percentage_in_year(2014)
-    # assert_equal 1, result.free_or_reduced_price_lunch_number_in_year(2014)
-    # assert_equal 1, result.title_i_in_year(2015)
+    assert_equal 88279, result.median_household_income_in_year(2010)
+    assert_equal 87635, result.median_household_income_average
+    assert_equal 0.064, result.children_in_poverty_in_year(2012)
+    assert_equal 0.042, result.free_or_reduced_price_lunch_percentage_in_year(2014)
+    assert_equal 6264, result.free_or_reduced_price_lunch_number_in_year(2014)
+    assert_equal 0.027, result.title_i_in_year(2014)
   end
 
   def test_economic_profile_provides_name_for_district
@@ -82,18 +81,6 @@ class EconomicProfileTest < Minitest::Test
 
   def test_lunch_number_calculates_properly
     assert_equal 100, @ep.free_or_reduced_price_lunch_number_in_year(2014)
-  end
-
-  def test_number_of_free_lunches
-    skip
-  end
-
-  def test_number_of_reduced_price_lunches
-    skip
-  end
-
-  def test_number_of_ineligable_for_free_lunches
-    skip
   end
 
   def test_title_i_in_year_calculates_properly
