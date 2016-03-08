@@ -133,44 +133,46 @@ class HeadcountAnalyst
   def top_statewide_test_year_over_year_growth(data)
     grade = sanitize_grade(data[:grade])
     subject = data[:subject]
+    weighting = data[:weighting]
 
     check_for_insufficient_info_and_grade(data)
-    #grade_subject_data = @sr.get_grade_subject_data(data)
-    grade_data = get_grade_data(grade)
-    binding.pry
+    grade_data = @sr.get_grade_data(grade)
+
+    # district_subject_data = @sr.statewide_tests.map{|swt|
+    #   [swt.name,grade_data.fetch(swt.name,"")]
+    # }.to_h
+
+    #grade_data.each_with_object { |subject, years| subject}
+    if subject.nil?
+      #all subjects
+      grade_data.flat_map{|district,subjects| subjects.map{|subject,subject_data|
+         [district,[[subject,compute_state_wide_year_over_year_growth(subject_data)]].to_h]}}.group_by{|k,v| k}
+
+    else
+      #single subject
+      subject_data = grade_data.map{|district,data|
+        [district,compute_state_wide_year_over_year_growth(data[subject])] if data[subject]
+      }.to_h
+      binding.pry
+    end
+
   end
 
-  def get_grade_data(grade)
-    grade_data_hash = @sr.statewide_tests.map{|swt|
-      [swt.name,swt.class_data.fetch(grade,0)]
-    }.to_h
+  def compute_state_wide_year_over_year_growth(subject_data)
+    max_year = sanitize_data(subject_data.fetch(subject_data.keys.max))
+    min_year = sanitize_data(subject_data.fetch(subject_data.keys.min))
+    num_of_years = subject_data.length
+    # binding.pry if String === max_year || String === min_year
+    truncate((max_year - min_year) / num_of_years)
   end
 
-  def overall_district(district_names)
-      all_states = @dr.districts.map { |district| district.name}
-  end 
-
-   def fetch_subject
-     grade_data.fetch("COLORADO").fetch(:subject)
-   end
-
-  def get_grade_subject_data(params)
-    grade = params[:grade] # || :third_grade
-    subject = params[:subject] #|| :math
-
-    grade_data_hash = get_grade_data(grade)
-
-    subject_data = grade_data_hash.map{|k,v|
-      binding.pry if k.nil? || v.nil? || subject.nil?
-      [k,v[subject]]
-    }.to_h
-  end
-
+# Where 0.123 is their average percentage growth across years. If there are
+# three years of proficiency data (year1, year2, year3), that's
+# ((proficiency at year3) - (proficiency at year1)) / (year3 - year1)
   def check_for_insufficient_info_and_grade(data)
     raise InsufficientInformationError,"A grade must be provided to answer this question" if data[:grade].nil?
     raise UnknownDataError,"#{:grade} is not a known grade" unless data[:grade] == 3 || data[:grade] == 8
   end
-
 
 end
 # dr = DistrictRepository.new

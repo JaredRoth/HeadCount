@@ -85,7 +85,7 @@ class HeadcountAnalystTest < Minitest::Test
   ##############################################################################################################################
 
   def test_finding_top_overall_districts
-    
+
     assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3).first
     assert_equal 0.071, @ha.top_statewide_test_year_over_year_growth(grade: 3).last
 
@@ -93,6 +93,17 @@ class HeadcountAnalystTest < Minitest::Test
     assert_equal 0.11, @ha.top_statewide_test_year_over_year_growth(grade: 8).last
   end
 
+  def test_single_object_results_by_subject
+    skip
+    assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math)
+  end
+
+  def test_specific_subject_returns_top_school
+    skip
+    assert_equal "SPRINGFIELD RE-45432", @ha.top_statewide_test_year_over_year_growth(grade: 8)
+    assert_equal 0.1271111,@ha.top_statewide_test_year_over_year_growth(grade: 8)
+  end
+  
   def test_weighting_results_by_subject
     skip
     top_performer = @ha.top_statewide_test_year_over_year_growth(grade: 8, :weighting => {:math => 0.5, :reading => 0.5, :writing => 0.0})

@@ -29,25 +29,23 @@ class StatewideTestRepository
     statewide_tests.find { |statewide_test| statewide_test.name.upcase == location.upcase}
   end
 
-  # def get_grade_data(grade)
-  #   grade_data_hash = statewide_tests.map{|swt|
-  #     [swt.name,swt.class_data.fetch(grade,0)]
-  #   }.to_h
-  # end
-  #
-  # def get_grade_subject_data(params)
-  #   grade = params[:grade] # || :third_grade
-  #   subject = params[:subject] #|| :math
-  #
-  #   grade_data_hash = get_grade_data(grade)
-  #
-  #   subject_data = grade_data_hash.map{|k,v|
-  #     binding.pry if k.nil? || v.nil? || subject.nil?
-  #     [k,v[subject]]
-  #   }.to_h
-  # end
+  def get_grade_data(grade)
+    grade_data_hash = statewide_tests.map{|swt|
+      [swt.name,swt.class_data.fetch(grade,0)]
+    }.to_h
+  end
 
+  def get_grade_subject_data(params)
+    grade = params[:grade] # || :third_grade
+    subject = params[:subject] #|| :math
 
+    grade_data_hash = get_grade_data(grade)
+
+    subject_data = grade_data_hash.map{|k,v|
+      binding.pry if k.nil? || v.nil? || subject.nil?
+      [k,v[subject]]
+    }.to_h
+  end
 
 private
   def group_data_by_location(data)
