@@ -1,5 +1,9 @@
 require_relative 'district_repository'
 require_relative 'module_helper'
+require_relative 'unknown_data_errors'
+require_relative 'statewide_test_repository'
+
+
 
 class HeadcountAnalyst
   include Helper
@@ -8,6 +12,7 @@ class HeadcountAnalyst
 
   def initialize(dr)
     @dr = dr
+    @sr = @dr.statewide_repo
   end
 
 
@@ -121,9 +126,53 @@ class HeadcountAnalyst
   def high_school_statewide_average
     calculate_high_school_participation_average("Colorado")
   end
+
+  ########################################################
+
+
+  def top_statewide_test_year_over_year_growth(data)
+    grade = sanitize_grade(data[:grade])
+    subject = data[:subject]
+
+    check_for_insufficient_info_and_grade(data)
+    #grade_subject_data = @sr.get_grade_subject_data(data)
+    grade_data = get_grade_data(grade)
+    binding.pry
+  end
+
+  def get_grade_data(grade)
+    grade_data_hash = @sr.statewide_tests.map{|swt|
+      [swt.name,swt.class_data.fetch(grade,0)]
+    }.to_h
+  end
+
+  def overall_district(district_names)
+      all_states = @dr.districts.map { |district| district.name}
+  end 
+
+   def fetch_subject
+     grade_data.fetch("COLORADO").fetch(:subject)
+   end
+
+  def get_grade_subject_data(params)
+    grade = params[:grade] # || :third_grade
+    subject = params[:subject] #|| :math
+
+    grade_data_hash = get_grade_data(grade)
+
+    subject_data = grade_data_hash.map{|k,v|
+      binding.pry if k.nil? || v.nil? || subject.nil?
+      [k,v[subject]]
+    }.to_h
+  end
+
+  def check_for_insufficient_info_and_grade(data)
+    raise InsufficientInformationError,"A grade must be provided to answer this question" if data[:grade].nil?
+    raise UnknownDataError,"#{:grade} is not a known grade" unless data[:grade] == 3 || data[:grade] == 8
+  end
+
+
 end
-
-
 # dr = DistrictRepository.new
 # dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
 # ha = HeadcountAnalyst.new(dr)

@@ -20,6 +20,10 @@ module Helper
     sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase == "N/A" ? "N/A" : sanitize_data(num)
   end
 
+  def sanitize_grade(num)
+    {3=>:third_grade,8=>:eighth_grade}.fetch(num,nil)
+  end
+
   def truncate_percentages(hash)
     hash.map do |year,value|
       [year, truncate(value.to_f)]
