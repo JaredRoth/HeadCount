@@ -3,41 +3,39 @@ require_relative '../lib/statewide_test'
 require_relative '../lib/district_repository'
 
 class StatewideTestTest < Minitest::Test
-  def setup
-    @str = StatewideTestRepository.new
-    @str.load_data({
-                    :statewide_testing => {
-                      :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-                      :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-                      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-                    }
-                  })
+  @@str = StatewideTestRepository.new
+  @@str.load_data({
+                  :statewide_testing => {
+                    :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+                    :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+                    :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
+                    :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
+                    :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+                  }
+                })
 
-    @st = @str.find_by_name("ACADEMY 20")
-  end
+  @@st = @@str.find_by_name("ACADEMY 20")
 
   def test_truncates_to_3_digits
-    result = @st.truncate(0.3847528305)
+    result = @@st.truncate(0.3847528305)
 
     assert_equal 0.384, result
   end
 
   def test_truncates_hash
-    result = @st.truncate_percentages({2010 => 0.391143, 2011 => 0.353234, 2012 => 0.267234})
+    result = @@st.truncate_percentages({2010 => 0.391143, 2011 => 0.353234, 2012 => 0.267234})
     nk = {2010 => 0.391, 2011 => 0.353, 2012 => 0.267}
 
     assert_equal nk, result
   end
 
   def test_enrollment_provides_name_for_district
-    assert_equal "ACADEMY 20", @st.name
+    assert_equal "ACADEMY 20", @@st.name
   end
 
   def test_proficient_by_grade_returns_UnknownDataError
     assert_raises UnknownDataError do
-      @st.proficient_by_grade(9)
+      @@st.proficient_by_grade(9)
     end
   end
 
@@ -58,16 +56,16 @@ class StatewideTestTest < Minitest::Test
               2013 => {math: 0.661, reading: 0.852, writing: 0.750},
               2014 => {math: 0.684, reading: 0.827, writing: 0.747}}
 
-    assert_equal third, @st.proficient_by_grade(3)
-    assert_equal eighth, @st.proficient_by_grade(8)
+    assert_equal third, @@st.proficient_by_grade(3)
+    assert_equal eighth, @@st.proficient_by_grade(8)
   end
 
   def test_proficient_by_race_or_ethnicity_returns_UnknownRaceError
     assert_raises UnknownDataError do
-      @st.proficient_by_race_or_ethnicity(:pizza)
+      @@st.proficient_by_race_or_ethnicity(:pizza)
     end
     assert_raises UnknownDataError do
-      @st.proficient_by_race_or_ethnicity(:all_students)
+      @@st.proficient_by_race_or_ethnicity(:all_students)
     end
   end
 
@@ -82,51 +80,51 @@ class StatewideTestTest < Minitest::Test
              2013=>{:math=>0.44,  :reading=>0.669, :writing=>0.481},
              2014=>{:math=>0.42,  :reading=>0.703, :writing=>0.519}}
 
-    assert_equal asian, @st.proficient_by_race_or_ethnicity(:asian)
-    assert_equal black, @st.proficient_by_race_or_ethnicity(:black)
+    assert_equal asian, @@st.proficient_by_race_or_ethnicity(:asian)
+    assert_equal black, @@st.proficient_by_race_or_ethnicity(:black)
   end
 
   def test_subject_by_grade_in_year_returns_UnknownDataError
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_grade_in_year(:pizza, 3, 2010)
+      @@st.proficient_for_subject_by_grade_in_year(:pizza, 3, 2010)
     end
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_grade_in_year(:math, 4, 2010)
+      @@st.proficient_for_subject_by_grade_in_year(:math, 4, 2010)
     end
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_grade_in_year(:math, 3, 2030)
+      @@st.proficient_for_subject_by_grade_in_year(:math, 3, 2030)
     end
   end
 
   def test_subject_by_grade_in_year_returns_correct_data_in_correct_format
-    assert_equal 0.857, @st.proficient_for_subject_by_grade_in_year(:math, 3, 2008)
+    assert_equal 0.857, @@st.proficient_for_subject_by_grade_in_year(:math, 3, 2008)
   end
 
   def test_subject_by_race_in_year_returns_UnknownDataError
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_race_in_year(:pizza, :asian, 2012)
+      @@st.proficient_for_subject_by_race_in_year(:pizza, :asian, 2012)
     end
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_race_in_year(:math, :pizza, 2012)
+      @@st.proficient_for_subject_by_race_in_year(:math, :pizza, 2012)
     end
     assert_raises UnknownDataError do
-      @st.proficient_for_subject_by_race_in_year(:math, :asian, 2030)
+      @@st.proficient_for_subject_by_race_in_year(:math, :asian, 2030)
     end
   end
 
   def test_subject_by_race_in_year_returns_correct_data_in_correct_format
-    assert_equal 0.818, @st.proficient_for_subject_by_race_in_year(:math, :asian, 2012)
+    assert_equal 0.818, @@st.proficient_for_subject_by_race_in_year(:math, :asian, 2012)
   end
 
   def test_proficiency_by_subject_and_year
 
-    testing = @str.find_by_name("ACADEMY 20")
+    testing = @@str.find_by_name("ACADEMY 20")
     assert_in_delta 0.653, testing.proficient_for_subject_by_grade_in_year(:math, 8, 2011), 0.005
 
-    testing = @str.find_by_name("WRAY SCHOOL DISTRICT RD-2")
+    testing = @@str.find_by_name("WRAY SCHOOL DISTRICT RD-2")
     assert_in_delta 0.89, testing.proficient_for_subject_by_grade_in_year(:reading, 3, 2014), 0.005
 
-    testing = @str.find_by_name("PLATEAU VALLEY 50")
+    testing = @@str.find_by_name("PLATEAU VALLEY 50")
     assert_equal "N/A", testing.proficient_for_subject_by_grade_in_year(:reading, 8, 2011)
   end
 end
