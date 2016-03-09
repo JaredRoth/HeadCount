@@ -8,6 +8,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    byebug (8.2.2)
     cane (2.6.2)
       parallel
     codeclimate-engine-rb (0.3.1)
@@ -36,6 +37,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.3.0)
+      byebug (~> 8.0)
+      pry (~> 0.10)
     rainbow (2.1.0)
     rake (10.5.0)
     reek (3.11)
@@ -71,6 +75,7 @@ DEPENDENCIES
   minitest
   mrspec
   pry
+  pry-byebug
   rake
   reek
   simplecov

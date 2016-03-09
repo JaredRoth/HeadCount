@@ -1,5 +1,8 @@
 require_relative 'district_repository'
 require_relative 'module_helper'
+require_relative 'statewide_test_repository'
+
+
 
 class HeadcountAnalyst
   include Helper
@@ -8,6 +11,7 @@ class HeadcountAnalyst
 
   def initialize(dr)
     @dr = dr
+    @sr = dr.statewide_repo
   end
 
 
@@ -59,10 +63,10 @@ class HeadcountAnalyst
 
   def kindergarten_participation_correlates_with_high_school_graduation(params)
     if params.has_key?(:for)
-       district_name = params[:for]
-       if district_name.upcase == "STATEWIDE"
-         statewide_correlated?(kindergarten_high_school_correlation_statewide(district_name))
-       else
+      district_name = params[:for]
+      if district_name.upcase == "STATEWIDE"
+        statewide_correlated?(kindergarten_high_school_correlation_statewide(district_name))
+      else
         correlated?(kindergarten_high_school_correlation(district_name))
       end
     else
@@ -88,8 +92,6 @@ class HeadcountAnalyst
   end
 
   def correlated?(num)
-    binding.pry if String === num
-
     num >= 0.6  && num <= 1.5
   end
 
@@ -108,7 +110,7 @@ class HeadcountAnalyst
   end
 
   def high_school_participation_average(district_name)
-      district = @dr.find_by_name(district_name)
+    district = @dr.find_by_name(district_name)
     high_school = district.enrollment.graduation_rate_by_year
     h = compute_average_from_participation_hash(high_school)
     graduation_variation = h/high_school_statewide_average
@@ -121,10 +123,86 @@ class HeadcountAnalyst
   def high_school_statewide_average
     calculate_high_school_participation_average("Colorado")
   end
+
+  ########################################################
+
+  def top_statewide_test_year_over_year_growth(data)
+    grade = sanitize_grade(data[:grade])
+    subject = data[:subject]
+    weighting = data[:weighting]
+
+    check_for_insufficient_info_and_grade(data)
+    grade_data = @sr.get_grade_data(grade)
+
+    if data.keys == [:grade, :top, :subject]
+      clacluated_growth_rates(grade_data, subject)
+    elsif data.keys == [:grade, :subject]
+      compute_highest_average_for_district_grade_subject(grade_data, subject)
+    elsif data.keys == [:grade, :weighting]
+      compute_single_school_with_weight(grade_data, data[:weighting])
+    else
+      compute_single_school_without_weight(grade_data)
+    end
+  end
+
+  def clacluated_growth_rates(grade_data, subject)
+    calculated_growth_rates = grade_data.map do |district, data|
+      [district, compute_yearly_subject_growth(data[subject])]
+    end.max_by(3) {|district| district[1]}
+  end
+
+  def compute_highest_average_for_district_grade_subject(grade_data, subject)
+    grade_data.reduce(["name", 0]) do |memo, (district, data)|
+      average = compute_yearly_subject_growth(data[subject])
+      average > memo[1] ? [district, average] : memo
+    end
+  end
+
+  def compute_single_school_with_weight(grade_data, weighting)
+
+    grade_data.reduce(["name", 0]) do |memo, (district, data)|
+      math = compute_yearly_subject_growth(data[:math])
+      reading = compute_yearly_subject_growth(data[:reading])
+      writing = compute_yearly_subject_growth(data[:writing])
+
+      average = truncate((math * weighting[:math]) + (reading * weighting[:reading] ) + (writing * weighting[:writing]))
+      average >= memo[1] ? [district, average] : memo
+    end
+  end
+
+  def compute_single_school_without_weight(grade_data)
+    grade_data.reduce(["name", 0]) do |memo, (district, data)|
+      math = compute_yearly_subject_growth(data[:math])
+      reading = compute_yearly_subject_growth(data[:reading])
+      writing = compute_yearly_subject_growth(data[:writing])
+      average = truncate((math + reading + writing) / 3)
+      average >= memo[1] ? [district, average] : memo
+    end
+  end
+
+
+  def compute_yearly_subject_growth(subject_data)
+    data = get_valid_subject_data(subject_data)
+    if data.empty?
+      0
+    else
+      max_year = sanitize_data(data.fetch(data.keys.max))
+      min_year = sanitize_data(data.fetch(data.keys.min))
+      num_of_years = data.keys.max - data.keys.min
+      truncate((max_year - min_year) / num_of_years)
+    end
+  end
+
+  def get_valid_subject_data(subject_data)
+    subject_data.map do |k,v|
+      [k,v] if Float === v
+    end.compact.to_h
+  end
+
+  def check_for_insufficient_info_and_grade(data)
+    raise InsufficientInformationError,"A grade must be provided to answer this question" if data[:grade].nil?
+    raise UnknownDataError,"#{:grade} is not a known grade" unless [3,8].include?data[:grade]
+  end
+
+
 end
-
-
-# dr = DistrictRepository.new
-# dr.load_data({:enrollment => {:kindergarten => "./data/sample_kindergartners_file.csv"}})
-# ha = HeadcountAnalyst.new(dr)
-# p ha.kindergarten_participation_rate_variation('ACADEMY 20', against: 'Colorado')
