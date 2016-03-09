@@ -52,13 +52,11 @@ class HeadcountAnalyst
     compute_average_from_participation_hash(participation_hash)
   end
 
-  def compute_state_district_participation_trend(state_name, district_participation_hash)
+  def compute_state_district_participation_trend(state_name,district_participation_hash)
     state = @dr.find_by_name(state_name)
     district_participation_hash.map do |year,value|
       state_value = state.enrollment.kindergarten_participation_in_year(year)
-      if state_value.nil?
-        "Invalid data"
-      elsif state_value == 0
+      if state_value == 0
         [year, 0.0]
       else
         [year,truncate(value/state_value)]
@@ -128,8 +126,6 @@ class HeadcountAnalyst
   def high_school_statewide_average
     calculate_high_school_participation_average("Colorado")
   end
-
-  ########################################################
 
   def top_statewide_test_year_over_year_growth(data)
     grade = sanitize_grade(data[:grade])
