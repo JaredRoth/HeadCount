@@ -24,7 +24,7 @@ class HeadcountAnalystTest < Minitest::Test
     @ha = HeadcountAnalyst.new(dr)
     #binding.pry
   end
-=begin
+
   def test_Kindergarten_participation_average
     assert_equal 0.766, @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
   end
@@ -81,49 +81,50 @@ class HeadcountAnalystTest < Minitest::Test
     districts = ["ACADEMY 20", 'PARK (ESTES PARK) R-3', 'YUMA SCHOOL DISTRICT 1']
     assert @ha.kindergarten_participation_correlates_with_high_school_graduation(:across => districts)
   end
-=end
+
   ##############################################################################################################################
 
   def test_finding_top_overall_districts
-    assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3)
-    assert_equal 0.071, @ha.top_statewide_test_year_over_year_growth(grade: 3).last
+
+     assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3).first
+     assert_equal 0.071, @ha.top_statewide_test_year_over_year_growth(grade: 3).last
 
     assert_equal "OURAY R-1", @ha.top_statewide_test_year_over_year_growth(grade: 8).first
-    assert_equal 0.11, @ha.top_statewide_test_year_over_year_growth(grade: 8).last
+     assert_equal 0.11, @ha.top_statewide_test_year_over_year_growth(grade: 8).last
   end
 
   def test_single_object_results_by_subject
-    skip
-    assert_equal ["SPRINGFIELD RE-4", 0.127], @ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math)
+
+    assert_equal ["WILEY RE-13 JT", 0.3], @ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math)
   end
 
   def test_specific_subject_returns_top_school
-    skip
-    assert_equal ["PLATEAU RE-5", 0.194], @ha.top_statewide_test_year_over_year_growth(grade: 8)
+
+    assert_equal ["OURAY R-1", 0.11], @ha.top_statewide_test_year_over_year_growth(grade: 8)
   end
 
   def test_state_wide_analysis_returns_top_three_districts
-    skip
-    top_district = [['top district name', 0.123], ['second district name', 0.123], ['third district name', 0.123]]
+
+    top_district = [["WILEY RE-13 JT", 0.3], ["SANGRE DE CRISTO RE-22J", 0.071], ["COTOPAXI RE-3", 0.07]]
     assert_equal top_district, @ha.top_statewide_test_year_over_year_growth(grade: 3, top: 3, subject: :math)
   end
 
   def test_weighting_results_by_subject
-    skip
+  
     top_performer = @ha.top_statewide_test_year_over_year_growth(grade: 8, :weighting => {:math => 0.5, :reading => 0.5, :writing => 0.0})
     assert_equal "OURAY R-1", top_performer.first
     assert_equal 0.153, top_performer.last
   end
 
   def test_insufficient_information_errors
-    skip
+
     assert_raises(InsufficientInformationError) do
       @ha.top_statewide_test_year_over_year_growth(subject: :math)
     end
   end
 
   def test_top_state_wide_test_returns_UnknownDataError_for_invladid_grade
-    skip
+
     assert_raises(UnknownDataError) do
       @ha.top_statewide_test_year_over_year_growth(grade: 9 )
     end
