@@ -92,8 +92,6 @@ class HeadcountAnalyst
   end
 
   def correlated?(num)
-    binding.pry if String === num
-
     num >= 0.6  && num <= 1.5
   end
 
@@ -137,20 +135,26 @@ class HeadcountAnalyst
     grade_data = @sr.get_grade_data(grade)
 
     if data.keys == [:grade, :top, :subject]
-      calculated_growth_rates = grade_data.map do |district, data|
-        [district, compute_yearly_subject_growth(data[subject])]
-      end.max_by(3) {|district| district[1]}
+      clacluated_growth_rates(grade_data, subject)
     elsif data.keys == [:grade, :subject]
-      grade_data.reduce(["name", 0]) do |memo, (district, data)|
-        average = compute_yearly_subject_growth(data[subject])
-        average > memo[1] ? [district, average] : memo
-      end
+      compute_highest_average_for_district_grade_subject(grade_data, subject)
     elsif data.keys == [:grade, :weighting]
-      # binding.pry
       compute_single_school_with_weight(grade_data, data[:weighting])
     else
       compute_single_school_without_weight(grade_data)
-    # binding.pry
+    end
+  end
+
+  def clacluated_growth_rates(grade_data, subject)
+    calculated_growth_rates = grade_data.map do |district, data|
+      [district, compute_yearly_subject_growth(data[subject])]
+    end.max_by(3) {|district| district[1]}
+  end
+
+  def compute_highest_average_for_district_grade_subject(grade_data, subject)
+    grade_data.reduce(["name", 0]) do |memo, (district, data)|
+      average = compute_yearly_subject_growth(data[subject])
+      average > memo[1] ? [district, average] : memo
     end
   end
 
@@ -167,14 +171,11 @@ class HeadcountAnalyst
   end
 
   def compute_single_school_without_weight(grade_data)
-    matches = [] # comparison of top performing school district
     grade_data.reduce(["name", 0]) do |memo, (district, data)|
       math = compute_yearly_subject_growth(data[:math])
       reading = compute_yearly_subject_growth(data[:reading])
       writing = compute_yearly_subject_growth(data[:writing])
-
       average = truncate((math + reading + writing) / 3)
-      matches << [district,average] if average >= 0.071
       average >= memo[1] ? [district, average] : memo
     end
   end
@@ -200,7 +201,7 @@ class HeadcountAnalyst
 
   def check_for_insufficient_info_and_grade(data)
     raise InsufficientInformationError,"A grade must be provided to answer this question" if data[:grade].nil?
-    raise UnknownDataError,"#{:grade} is not a known grade" unless data[:grade] == 3 || data[:grade] == 8
+    raise UnknownDataError,"#{:grade} is not a known grade" unless [3,8].include?data[:grade]
   end
 
 
