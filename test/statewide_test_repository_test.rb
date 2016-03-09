@@ -72,6 +72,10 @@ class StatewideTestRepositoryTest < Minitest::Test
     assert_equal "ACADEMY 20", statewide_test.name
   end
 
+  def test_gets_grade_data
+    assert_equal "YUMA SCHOOL DISTRICT 1", @@sr.get_grade_data(3).keys.last
+  end
+
   def test_will_return_nil_if_invalid_name
     assert_nil @@sr.find_by_name("Jimmmy")
   end

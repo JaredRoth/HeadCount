@@ -48,12 +48,11 @@ class HeadcountAnalyst
   end
 
   def compute_state_district_participation_trend(state_name,district_participation_hash)
+    # binding.pry
     state = @dr.find_by_name(state_name)
     district_participation_hash.map do |year,value|
       state_value = state.enrollment.kindergarten_participation_in_year(year)
-      if state_value.nil?
-        "Invalid data"
-      elsif state_value == 0
+      if state_value == 0
         [year, 0.0]
       else
         [year,truncate(value/state_value)]
