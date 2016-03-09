@@ -1,6 +1,5 @@
 require_relative 'district_repository'
 require_relative 'module_helper'
-require_relative 'unknown_data_errors'
 require_relative 'statewide_test_repository'
 
 
@@ -11,8 +10,7 @@ class HeadcountAnalyst
   attr_reader :dr
 
   def initialize(dr)
-    @dr = dr
-    @sr = @dr.statewide_repo
+    @sr = dr.statewide_repo
   end
 
 
@@ -137,31 +135,50 @@ class HeadcountAnalyst
 
     check_for_insufficient_info_and_grade(data)
     grade_data = @sr.get_grade_data(grade)
-
+    # binding.pry
     # district_subject_data = @sr.statewide_tests.map{|swt|
     #   [swt.name,grade_data.fetch(swt.name,"")]
     # }.to_h
 
     #grade_data.each_with_object { |subject, years| subject}
-    if subject.nil?
-      #all subjects
-      grade_data.flat_map{|district,subjects| subjects.map{|subject,subject_data|
-         [district,[[subject,compute_state_wide_year_over_year_growth(subject_data)]].to_h]}}.group_by{|k,v| k}
-
+    if data.has_key?(:top)
+      calculated_growth_rates = grade_data.map do |district, data|
+        [district, compute_yearly_subject_growth(data[subject])]
+      end.max_by(3) {|district| district[1]}
+    elsif data.has_key?(:subject)
+      grade_data.reduce(["name", 0]) do |memo, (district, data)|
+        temp = compute_yearly_subject_growth(data[subject])
+        temp > memo[1] ? [district, temp] : memo
+      end
     else
-      #single subject
-      subject_data = grade_data.map{|district,data|
-        [district,compute_state_wide_year_over_year_growth(data[subject])] if data[subject]
-      }.to_h
-      binding.pry
+      grade_data.reduce(["name", 0]){|memo, (district, data)|
+        temp = district_overall_growth(data)
+
+        temp > memo[1] ? [district, temp] : memo
+      }
     end
+  end
+
+  def district_overall_growth(data)
+    years = data[:math].map do |year|
+      math = year[1].to_s.include?("N") ? 0.0 : year[1]
+      reading = data[:reading][year[0]].to_s.include?("N") ? 0.0 : data[:reading][year[0]]
+      writing = data[:writing][year[0]].to_s.include?("N") ? 0.0 : data[:writing][year[0]]
+
+      total = math + reading + writing
+      [year[0], total / 3]
+    end.to_h
+    compute_yearly_subject_growth(years)
+  end
+
+  def convert_na_to_0()
 
   end
 
-  def compute_state_wide_year_over_year_growth(subject_data)
+  def compute_yearly_subject_growth(subject_data)
     max_year = sanitize_data(subject_data.fetch(subject_data.keys.max))
     min_year = sanitize_data(subject_data.fetch(subject_data.keys.min))
-    num_of_years = subject_data.length
+    num_of_years = subject_data.keys.max - subject_data.keys.min
     # binding.pry if String === max_year || String === min_year
     truncate((max_year - min_year) / num_of_years)
   end

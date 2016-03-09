@@ -85,8 +85,7 @@ class HeadcountAnalystTest < Minitest::Test
   ##############################################################################################################################
 
   def test_finding_top_overall_districts
-
-    assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3).first
+    assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3)
     assert_equal 0.071, @ha.top_statewide_test_year_over_year_growth(grade: 3).last
 
     assert_equal "OURAY R-1", @ha.top_statewide_test_year_over_year_growth(grade: 8).first
@@ -95,15 +94,20 @@ class HeadcountAnalystTest < Minitest::Test
 
   def test_single_object_results_by_subject
     skip
-    assert_equal "SANGRE DE CRISTO RE-22J", @ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math)
+    assert_equal ["SPRINGFIELD RE-4", 0.127], @ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math)
   end
 
   def test_specific_subject_returns_top_school
     skip
-    assert_equal "SPRINGFIELD RE-45432", @ha.top_statewide_test_year_over_year_growth(grade: 8)
-    assert_equal 0.1271111,@ha.top_statewide_test_year_over_year_growth(grade: 8)
+    assert_equal ["PLATEAU RE-5", 0.194], @ha.top_statewide_test_year_over_year_growth(grade: 8)
   end
-  
+
+  def test_state_wide_analysis_returns_top_three_districts
+    skip
+    top_district = [['top district name', 0.123], ['second district name', 0.123], ['third district name', 0.123]]
+    assert_equal top_district, @ha.top_statewide_test_year_over_year_growth(grade: 3, top: 3, subject: :math)
+  end
+
   def test_weighting_results_by_subject
     skip
     top_performer = @ha.top_statewide_test_year_over_year_growth(grade: 8, :weighting => {:math => 0.5, :reading => 0.5, :writing => 0.0})
@@ -112,14 +116,14 @@ class HeadcountAnalystTest < Minitest::Test
   end
 
   def test_insufficient_information_errors
-
+    skip
     assert_raises(InsufficientInformationError) do
       @ha.top_statewide_test_year_over_year_growth(subject: :math)
     end
   end
 
   def test_top_state_wide_test_returns_UnknownDataError_for_invladid_grade
-
+    skip
     assert_raises(UnknownDataError) do
       @ha.top_statewide_test_year_over_year_growth(grade: 9 )
     end

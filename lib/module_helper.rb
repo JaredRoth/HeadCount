@@ -1,4 +1,4 @@
-require_relative "unknown_data_errors"
+require_relative "errors"
 
 module Helper
 
@@ -17,7 +17,7 @@ module Helper
   end
 
   def sanitize_data_to_na(num)
-    sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase == "N/A" ? "N/A" : sanitize_data(num)
+    sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase.chars[0] == "N" ? "N/A" : sanitize_data(num)
   end
 
   def sanitize_grade(num)

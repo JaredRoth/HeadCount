@@ -30,8 +30,8 @@ class StatewideTestRepository
   end
 
   def get_grade_data(grade)
-    grade_data_hash = statewide_tests.map{|swt|
-      [swt.name,swt.class_data.fetch(grade,0)]
+    statewide_tests.map{|swt|
+      [swt.name, swt.class_data.fetch(grade,0)]
     }.to_h
   end
 
