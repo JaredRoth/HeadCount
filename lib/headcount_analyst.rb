@@ -14,6 +14,20 @@ class HeadcountAnalyst
     @sr = dr.statewide_repo
   end
 
+  def kindergarten_participation_rate_variation(district_name, params)
+    district_average = calculate_kindergartner_participation_average(district_name)
+    state_name = params[:against]
+    state_average = calculate_kindergartner_participation_average(state_name)
+    truncate(district_average / state_average)
+  end
+
+  def kindergarten_participation_rate_variation_trend(district_name, params)
+    state_name = params[:against]
+    district = @dr.find_by_name(district_name)
+    district_participation_hash = district.enrollment.kindergarten_participation_by_year
+    compute_state_district_participation_trend(state_name,district_participation_hash)
+  end
+
 
   def compute_average_from_participation_hash(participation_hash)
     participation_total = participation_hash.values.map{|val| String === val ? 0 : val}.reduce(:+)
@@ -33,22 +47,7 @@ class HeadcountAnalyst
     compute_average_from_participation_hash(participation_hash)
   end
 
-  def kindergarten_participation_rate_variation(district_name, params)
-    district_average = calculate_kindergartner_participation_average(district_name)
-    state_name = params[:against]
-    state_average = calculate_kindergartner_participation_average(state_name)
-    truncate(district_average / state_average)
-  end
-
-  def kindergarten_participation_rate_variation_trend(district_name, params)
-    state_name = params[:against]
-    district = @dr.find_by_name(district_name)
-    district_participation_hash = district.enrollment.kindergarten_participation_by_year
-    compute_state_district_participation_trend(state_name,district_participation_hash)
-  end
-
   def compute_state_district_participation_trend(state_name,district_participation_hash)
-    # binding.pry
     state = @dr.find_by_name(state_name)
     district_participation_hash.map do |year,value|
       state_value = state.enrollment.kindergarten_participation_in_year(year)
@@ -62,15 +61,13 @@ class HeadcountAnalyst
 
   def kindergarten_participation_correlates_with_high_school_graduation(params)
     if params.has_key?(:for)
-      district_name = params[:for]
-      if district_name.upcase == "STATEWIDE"
-        statewide_correlated?(kindergarten_high_school_correlation_statewide(district_name))
+      if params[:for].upcase == "STATEWIDE"
+        statewide_correlated?(kindergarten_high_school_correlation_statewide(params[:for]))
       else
-        correlated?(kindergarten_high_school_correlation(district_name))
+        correlated?(kindergarten_high_school_correlation(params[:for]))
       end
     else
-      districts = params[:across]
-
+      params[:across]
     end
   end
 
@@ -80,8 +77,10 @@ class HeadcountAnalyst
 
   def kindergarten_high_school_correlation_statewide(district_name)
     all_states = @dr.districts.map { |district| district.name}
-    num_passing_schools = all_states.count { |district_name| correlated?(kindergarten_high_school_correlation(district_name))}
-    state_verification = num_passing_schools.to_f/all_states.length.to_f
+    num_passing_schools = all_states.count do |district_name|
+      correlated?(kindergarten_high_school_correlation(district_name))
+    end
+    num_passing_schools.to_f/all_states.length.to_f
   end
 
   def kindergarten_high_school_correlation(district_name)
@@ -123,8 +122,6 @@ class HeadcountAnalyst
     calculate_high_school_participation_average("Colorado")
   end
 
-  ########################################################
-
   def top_statewide_test_year_over_year_growth(data)
     grade = sanitize_grade(data[:grade])
     subject = data[:subject]
@@ -138,9 +135,9 @@ class HeadcountAnalyst
     elsif data.keys == [:grade, :subject]
       compute_highest_average_for_district_grade_subject(grade_data, subject)
     elsif data.keys == [:grade, :weighting]
-      compute_single_school_with_weight(grade_data, data[:weighting])
+      compute_single_school(grade_data, data[:weighting])
     else
-      compute_single_school_without_weight(grade_data)
+      compute_single_school(grade_data)
     end
   end
 
@@ -157,28 +154,22 @@ class HeadcountAnalyst
     end
   end
 
-  def compute_single_school_with_weight(grade_data, weighting)
-
+  def compute_single_school(grade_data, weight = {})
     grade_data.reduce(["name", 0]) do |memo, (district, data)|
-      math = compute_yearly_subject_growth(data[:math])
+      math    = compute_yearly_subject_growth(data[:math])
       reading = compute_yearly_subject_growth(data[:reading])
       writing = compute_yearly_subject_growth(data[:writing])
 
-      average = truncate((math * weighting[:math]) + (reading * weighting[:reading] ) + (writing * weighting[:writing]))
+      average =
+      if weight.empty?
+        ((math + reading + writing) / 3)
+      else
+        (math * weight[:math]) + (reading * weight[:reading]) + (writing * weight[:writing])
+      end
+      average = truncate(average)
       average >= memo[1] ? [district, average] : memo
     end
   end
-
-  def compute_single_school_without_weight(grade_data)
-    grade_data.reduce(["name", 0]) do |memo, (district, data)|
-      math = compute_yearly_subject_growth(data[:math])
-      reading = compute_yearly_subject_growth(data[:reading])
-      writing = compute_yearly_subject_growth(data[:writing])
-      average = truncate((math + reading + writing) / 3)
-      average >= memo[1] ? [district, average] : memo
-    end
-  end
-
 
   def compute_yearly_subject_growth(subject_data)
     data = get_valid_subject_data(subject_data)
@@ -193,15 +184,14 @@ class HeadcountAnalyst
   end
 
   def get_valid_subject_data(subject_data)
-    subject_data.map do |k,v|
-      [k,v] if Float === v
+    subject_data.map do |key,value|
+      [key,value] if Float === value
     end.compact.to_h
   end
 
   def check_for_insufficient_info_and_grade(data)
-    raise InsufficientInformationError,"A grade must be provided to answer this question" if data[:grade].nil?
+    raise InsufficientInformationError,
+      "A grade must be provided to answer this question" if data[:grade].nil?
     raise UnknownDataError,"#{:grade} is not a known grade" unless [3,8].include?data[:grade]
   end
-
-
 end

@@ -17,7 +17,11 @@ module Helper
   end
 
   def sanitize_data_to_na(num)
-    sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase.chars[0] == "N" ? "N/A" : sanitize_data(num)
+    if sanitize_data(num) == 0 || sanitize_data(num).to_s.upcase.chars[0] == "N"
+      "N/A"
+    else
+      sanitize_data(num)
+    end
   end
 
   def sanitize_grade(num)
