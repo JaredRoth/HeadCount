@@ -27,24 +27,21 @@ class EnrollmentRepository
     end
   end
 
+  def find_by_name(location)
+    enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
+  end
+
+  private
+
   def group_data_by_location(data)
     data.group_by { |row| row[:location].upcase }
   end
 
   def all_districts_info(data)
-    data_grouped_by_location = group_data_by_location(data)
-    hash_result = {}
-    data_grouped_by_location.each do |name, value|
-      one_districts_info = {}
-      value.each do |line|
-        one_districts_info[line[:timeframe].to_i] = sanitize_data(line[:data])
+    group_data_by_location(data).each_with_object({}) do |(name, values), districts|
+      districts[name] = values.each_with_object({}) do |row, one_districts_info|
+        one_districts_info[row[:timeframe].to_i] = sanitize_data(row[:data])
       end
-      hash_result[name] = one_districts_info
     end
-    hash_result
-  end
-
-  def find_by_name(location)
-    enrollments.find { |enrollment| enrollment.name.upcase == location.upcase}
   end
 end

@@ -30,29 +30,18 @@ class StatewideTestRepository
   end
 
   def get_grade_data(grade)
-    statewide_tests.map{|swt|
-      [swt.name, swt.class_data.fetch(grade,0)]
+    statewide_tests.map{|statewide_test|
+      [statewide_test.name, statewide_test.class_data.fetch(grade,0)]
     }.to_h
   end
 
-  def get_grade_subject_data(params)
-    grade = params[:grade] # || :third_grade
-    subject = params[:subject] #|| :math
+  private
 
-    grade_data_hash = get_grade_data(grade)
-
-    subject_data = grade_data_hash.map{|k,v|
-      binding.pry if k.nil? || v.nil? || subject.nil?
-      [k,v[subject]]
-    }.to_h
-  end
-
-private
-  def group_data_by_location(data)
+  def group_by_location(data)
     data.group_by { |row| row[:location].upcase }
   end
 
-  def group_data_by_subject(data)
+  def group_by_subject(data)
     data.group_by { |row| row[class_or_race(row)] }
   end
 
@@ -65,20 +54,23 @@ private
   end
 
   def all_districts_info(data)
-    data_grouped_by_location = group_data_by_location(data)
-    hash_result = {}
-    data_grouped_by_location.each do |name,full_hash_of_data|
-      data_grouped_by_subject = group_data_by_subject(full_hash_of_data)
-      one_districts_info = {}
-      data_grouped_by_subject.each do |subject, data|
-        one_class_info = {}
-        data.each do |line|
-          one_class_info[line[:timeframe].to_i] = sanitize_data_to_na(line[:data])
-        end
-        one_districts_info[subject.downcase.gsub(/\W/,'_').to_sym] = one_class_info
-      end
-      hash_result[name] = one_districts_info
+    group_by_location(data).each_with_object({}) do |(name, district_data), subject_data|
+      single_district_data(name, district_data, subject_data)
     end
-    hash_result
+  end
+
+  def single_district_data(name, district_data, subject_data)
+    grouped_data = group_by_subject(district_data)
+
+    subject_data[name] = grouped_data.each_with_object({}) do |(subject, data), district_data|
+      single_subject_data(subject, data, district_data)
+    end
+  end
+
+  def single_subject_data(subject, data, district_data)
+    one_subject_data = data.each_with_object({}) do |row, subject_data|
+      subject_data[row[:timeframe].to_i] = sanitize_data_to_na(row[:data])
+    end
+    district_data[subject.downcase.gsub(/\W/,'_').to_sym] = one_subject_data
   end
 end

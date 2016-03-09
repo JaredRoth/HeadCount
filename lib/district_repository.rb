@@ -15,13 +15,33 @@ class DistrictRepository
     @economic_repo   = EconomicProfileRepository.new
   end
 
+  def find_by_name(location)
+    districts.find { |district| district.name == location.upcase }
+  end
+
+  def find_all_matching(location)
+    districts.find_all { |district| district.name.include?(location.upcase)}
+  end
+
   def load_data(repo_types)
     create_district_repo(repo_types)
 
     repo_types.each do |repo_type, files|
       build_correct_repo(repo_type, files)
     end
+
     insert_info_into_districts
+  end
+
+  private
+
+  def create_district_repo(files)
+    filename = files[:enrollment][:kindergarten]
+    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
+    data.each do |row|
+      next if find_by_name(row[:location].upcase)
+      districts << District.new(name: row[:location])
+    end
   end
 
   def build_correct_repo(repo_type, files)
@@ -41,22 +61,4 @@ class DistrictRepository
       district.economic_profile = @economic_repo.find_by_name(district.name)
     end
   end
-
-  def create_district_repo(files)
-    filename = files[:enrollment][:kindergarten]
-    data = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-    data.each do |row|
-      next if find_by_name(row[:location].upcase)
-      districts << District.new(name: row[:location])
-    end
-  end
-
-  def find_by_name(location)
-    districts.find { |district| district.name == location.upcase }
-  end
-
-  def find_all_matching(location)
-    districts.find_all { |district| district.name.include?(location.upcase)}
-  end
-
 end

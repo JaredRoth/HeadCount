@@ -12,12 +12,12 @@ class Enrollment
   end
 
   def organize_data(args)
-    args.each_pair do |key,value|
-      next if key == :name
-      if key == :kindergarten_participation
-        @grade_data[:kindergarten] = truncate_percentages(args[key])
+    args.each_pair do |source, grouped_data|
+      next if source == :name
+      if source == :kindergarten_participation
+        @grade_data[:kindergarten] = truncate_percentages(args[source])
       else
-        @grade_data[key] = truncate_percentages(args[key])
+        @grade_data[source] = truncate_percentages(args[source])
       end
     end
   end

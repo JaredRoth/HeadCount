@@ -14,47 +14,60 @@ class EconomicProfileRepository
   end
 
   def load_data(source)
-    data_collected_by_type = source[:economic_profile].map do |data_type, filename|
-      csv_as_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
-      one_files_data = Hash.new
-      one_files_data[data_type] = {}
-      all_districts_info(csv_as_hash, data_type).each do |name, one_districts_data|
-        one_files_data[data_type][name] = one_districts_data
-      end
-      [data_type, one_files_data[data_type]]
-    end.to_h
+    create_repo(organize_data_by_source(source)).each_value do |value|
+      economic_profiles << EconomicProfile.new(value)
+    end
 
-    all_data_hash = {}
-    data_collected_by_type.each do |data_metric, districts|
+    # ######### Ask preference
+    # data_collected_by_type = organize_data_by_source(source)
+    #
+    # all_data_hash = create_repo(data_collected_by_type)
+    #
+    # all_data_hash.each_value do |value|
+    #   economic_profiles << EconomicProfile.new(value)
+    # end
+  end
+
+  def find_by_name(location)
+    economic_profiles.find { |profile| profile.name.upcase == location.upcase}
+  end
+
+private
+
+  def create_repo(organized_data)
+    organized_data.each_with_object({}) do |(data_metric, districts), all_data_hash|
       districts.each do |name, data|
         if all_data_hash[name].nil?
-          all_data_hash[name] = Hash[data_metric, data, :name, name]
+          all_data_hash[name] = {data_metric => data, :name => name}
         else
           all_data_hash[name][data_metric] = data
         end
       end
     end
-
-    all_data_hash.each_value do |value|
-      economic_profiles << EconomicProfile.new(value)
-    end
   end
 
-  def find_by_name(location)
-    economic_profiles.find { |econ_profile| econ_profile.name.upcase == location.upcase}
+  def organize_data_by_source(source)
+    source[:economic_profile].map do |data_type, filename|
+      csv_as_hash = CSV.readlines(filename, headers: true, header_converters: :symbol).map(&:to_h)
+      one_files_data = Hash.new({})
+      all_districts_info(csv_as_hash, data_type).each do |name, one_districts_data|
+        one_files_data[data_type][name] = one_districts_data
+      end
+      [data_type, one_files_data[data_type]]
+    end.to_h
   end
-
-  private
 
   def all_districts_info(data, data_type)
-    data = group_data_by_location(data)
-
-    data.each_with_object({}) do |(name, value), one_districts_info|
-      decide_data_type(name, value, one_districts_info, data_type)
+    group_data_by_location(data).each_with_object({}) do |(name, values), one_districts_info|
+      collect_appropriate_data(name, values, one_districts_info, data_type)
     end
   end
 
-  def decide_data_type(name, value, data, data_type)
+  def group_data_by_location(data)
+    data.group_by { |row| row[:location].upcase }
+  end
+
+  def collect_appropriate_data(name, value, data, data_type)
     case data_type
     when :median_household_income
       collect_income_data(name, value, data)
@@ -81,16 +94,10 @@ class EconomicProfileRepository
 
   def collect_lunch_data(name, value, data)
     data[name] = value.each_with_object({}) do |row, year_data|
-      unless year_data.has_key?(row[:timeframe].to_i)
-        year_data[row[:timeframe].to_i] = Hash[:percentage, 0, :total, 0]
-      end
-
-      if row[:dataformat].upcase == "NUMBER"
-        year_data[row[:timeframe].to_i][:total] += row[:data].to_i
-      elsif row[:dataformat].upcase == "PERCENT"
-        year_data[row[:timeframe].to_i][:percentage] += row[:data].to_f
-      end
+      initialize_fields(year_data, row)
+      fill_num_or_percent(year_data, row)
     end
+
     data[name].each do |year, data_hash|
       sanitize_data(data_hash[:percentage] = data_hash[:percentage] / 6)
     end
@@ -102,21 +109,17 @@ class EconomicProfileRepository
     end
   end
 
-  def group_data_by_location(data)
-    data.group_by { |row| row[:location].upcase }
+  def initialize_fields(year_data, row)
+    unless year_data.has_key?(row[:timeframe].to_i)
+      year_data[row[:timeframe].to_i] = {:percentage => 0, :total => 0}
+    end
   end
 
-  def deal_with_lunch_info
-
+  def fill_num_or_percent(year_data, row)
+    if row[:dataformat].upcase == "NUMBER"
+      year_data[row[:timeframe].to_i][:total] += row[:data].to_i
+    elsif row[:dataformat].upcase == "PERCENT"
+      year_data[row[:timeframe].to_i][:percentage] += row[:data].to_f
+    end
   end
 end
-
-
-# epr = EconomicProfileRepository.new
-# epr.load_data({
-#               :economic_profile => {
-#                 :median_household_income     => "./test_data/sample_median.csv",
-#                 :children_in_poverty         => "./test_data/sample_poverty.csv",
-#                 :free_or_reduced_price_lunch => "./test_data/sample_lunch.csv",
-#                 :title_i                     => "./test_data/sample_title_i.csv"}
-#               })

@@ -1,5 +1,4 @@
 require_relative 'module_helper'
-require 'pry'
 
 class EconomicProfile
   include Helper
